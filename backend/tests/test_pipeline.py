@@ -46,6 +46,12 @@ def test_spec_example_p2210_scores_4_moderate(pipeline):
     assert out["risk_score"] == 4 and out["risk_level"] == "Moderate"
 
 
+def test_p3301_ckd_not_kidney_cleared_scores_5(pipeline):
+    out = pipeline.check("Tylenol", "Warfarin", "P-3301")
+    assert out["risk_score"] == 5 and out["risk_level"] == "Moderate"
+    assert "kidney" not in [l["rule"] for l in out["score_breakdown"]]
+
+
 def test_misspelling_returns_suggestions(pipeline):
     from rxguard.pipeline import CheckError
     with pytest.raises(CheckError) as e:
@@ -87,5 +93,11 @@ def test_api_check_and_errors(pipeline):
         assert r.status_code == 200 and r.json()["risk_score"] == 9
         assert c.post("/check", json={"drug_a": "Tylenol", "drug_b": "Coumadin", "patient_id": "P-9"}).status_code == 404
         assert c.get("/health").json()["interaction_pairs"] == 1
+        assert c.get("/drugs", params={"q": "war"}).json()["suggestions"][0] == "warfarin"
+        assert "tylenol" in c.get("/drugs", params={"q": "tyl"}).json()["suggestions"]
+        assert c.get("/drugs", params={"q": ""}).json()["suggestions"] == []
+        pts = {x["patient_id"]: x for x in c.get("/patients").json()["patients"]}
+        assert {"P-1042", "P-2210", "P-3301"} <= set(pts)
+        assert "Chronic liver disease" in pts["P-1042"]["conditions"]
     finally:
         api.app.dependency_overrides.clear()

@@ -52,6 +52,15 @@ PATIENTS = {
         obs("1742-6", LOINC, 22, "U/L", "2026-07-10T09:00:00Z"),
         obs(ALCOHOL_CODE, ALCOHOL_SYSTEM, 0, "drinks/day", "2026-07-10T09:00:00Z"),
     ]),
+    # Older patient with kidney disease: same pair scores 5 (Moderate); kidney rule stays off
+    # because neither acetaminophen nor warfarin is kidney-cleared.
+    "P-3301": bundle("P-3301", "1952-11-20", [
+        condition("Chronic kidney disease stage 3 (disorder)"),
+        condition("Essential hypertension (disorder)"),
+        obs("33914-3", LOINC, 42, "mL/min/1.73m2", "2026-09-02T09:00:00Z"),
+        obs("1742-6", LOINC, 31, "U/L", "2026-09-02T09:00:00Z"),
+        obs(ALCOHOL_CODE, ALCOHOL_SYSTEM, 1, "drinks/day", "2026-09-02T09:00:00Z"),
+    ]),
 }
 
 

@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Atkinson Hyperlegible", system-ui, sans-serif;
+
+  --color-blister: #edf1f5;   /* page */
+  --color-surface: #ffffff;
+  --color-ink: #16283a;       /* text, base severity */
+  --color-muted: #566676;
+  --color-rule: #d3dbe3;
+  --color-act: #0e6773;       /* buttons, focus */
+  --color-act-dark: #0a4f58;
+
+  --color-low: #2f7d57;
+  --color-moderate: #b7791f;
+  --color-high: #b42318;
+  --color-unknown: #6b5ca5;
+}
+
+html { background: var(--color-blister); color: var(--color-ink); }
+body { font-family: var(--font-sans); font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+
+:focus-visible { outline: 3px solid var(--color-act); outline-offset: 2px; border-radius: 4px; }
+
+/* The one orchestrated moment: strip cells fill left to right when a result arrives. */
+@keyframes cell-in { from { transform: scaleY(0.2); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+.cell-fill { animation: cell-in 260ms cubic-bezier(.2,.7,.3,1) both; transform-origin: bottom; }
+@media (prefers-reduced-motion: reduce) { .cell-fill { animation: none; } }

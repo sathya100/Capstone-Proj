@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 from rxguard.interactions.store import InteractionStore, NoModelPredictor, SeverityPredictor, base_severity
 from rxguard.models import SeverityResult
-from rxguard.normalise.rxnorm import RxNormNormaliser
+from rxguard.normalise.rxnorm import OFFLINE_ALIASES, RxNormNormaliser
 from rxguard.rules.engine import RulesEngine
 
 DISCLAIMER = "Clinical decision support only. Not medical advice."
@@ -30,6 +30,19 @@ class Pipeline:
         self.engine = engine
         self.predictor = predictor or NoModelPredictor()
         self.explainer = explainer
+
+    def suggest_drugs(self, q: str, limit: int = 8) -> list[str]:
+        """Autocomplete (FR-01): known brand/generic names and every drug in the interaction store."""
+        q = q.strip().lower()
+        if not q:
+            return []
+        names = set(OFFLINE_ALIASES) | set(self.engine.drugs) | set(self.store.drug_names(q, 50))
+        starts = sorted(n for n in names if n.startswith(q))
+        contains = sorted(n for n in names if q in n and not n.startswith(q))
+        return (starts + contains)[:limit]
+
+    def list_patients(self) -> list[dict[str, Any]]:
+        return self.patients.list()
 
     def check(self, drug_a: str, drug_b: str, patient_id: str) -> dict[str, Any]:
         # 1. Normalise

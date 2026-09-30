@@ -55,6 +55,14 @@ class InteractionStore:
         ).fetchone()
         return row[0] if row else None
 
+    def drug_names(self, prefix: str = "", limit: int = 20) -> list[str]:
+        """Distinct drug names starting with prefix, for autocomplete."""
+        like = prefix.strip().lower() + "%"
+        rows = self.conn.execute(
+            "SELECT name FROM (SELECT drug_a AS name FROM interactions UNION SELECT drug_b FROM interactions)"
+            " WHERE name LIKE ? ORDER BY name LIMIT ?", (like, limit)).fetchall()
+        return [r[0] for r in rows]
+
     def count(self) -> int:
         return self.conn.execute("SELECT COUNT(*) FROM interactions").fetchone()[0]
 

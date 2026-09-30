@@ -49,6 +49,9 @@ Capstone-Proj/
 │   ├── scripts/             Offline data pipelines
 │   ├── tests/               Unit and end-to-end tests
 │   └── README.md            Backend details
+├── frontend/                React + Vite web UI
+│   ├── src/components/      Gauge, breakdown, body map, inputs
+│   └── README.md            Frontend details
 ├── docs/
 │   └── RxGuard_Requirements_Architecture.pdf
 └── .github/workflows/       CI: runs the tests on every push
@@ -65,7 +68,17 @@ python -m pytest                          # run the tests
 uvicorn rxguard.api.main:app --reload     # API docs at http://localhost:8000/docs
 ```
 
-Or with Docker (API + HAPI FHIR server): `cd backend && docker compose up --build`
+Then the web UI, in a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev                               # http://localhost:5173
+```
+
+Click "Try the example" to see the same drug pair scored for two patients side by side.
+
+Or run the backend with Docker (API + HAPI FHIR server): `cd backend && docker compose up --build`
 
 ## Status
 
@@ -75,9 +88,9 @@ Or with Docker (API + HAPI FHIR server): `cd backend && docker compose up --buil
 | Interaction store (DDInter) | FR-04 | ✅ Done — real DDInter data not yet loaded |
 | ML severity predictor | FR-05 | ⏳ Planned (weeks 3–4) |
 | Patient context (FHIR) | FR-06–07 | ✅ Done — Synthea patients not yet generated |
-| Rules engine | FR-08–10 | ✅ Done, 43 tests passing |
+| Rules engine | FR-08–10 | ✅ Done, 44 tests passing |
 | RAG explainer | FR-11–13 | ⏳ Planned (weeks 6–7) |
-| Web UI | FR-14–16 | ⏳ Planned (weeks 9–10) |
+| Web UI | FR-14–17 | ✅ Done — explanation panel waits on the RAG explainer |
 
 ## Data sources
 

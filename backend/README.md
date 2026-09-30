@@ -11,7 +11,7 @@ cd backend
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/make_dev_data.py          # spec example patients P-1042, P-2210 + seed pair
-python -m pytest                          # 43 tests: every rule and boundary + spec example
+python -m pytest                          # 44 tests: every rule and boundary + spec example
 uvicorn rxguard.api.main:app --reload     # http://localhost:8000/docs
 ```
 
@@ -21,6 +21,15 @@ curl -X POST localhost:8000/check -H 'content-type: application/json' \
 ```
 
 Swap `P-1042` for `P-2210` and the same pair scores 4, Moderate.
+
+## API
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /check` | `{drug_a, drug_b, patient_id}` → full risk report |
+| `GET /drugs?q=war` | Autocomplete suggestions for medicine names |
+| `GET /patients` | Patient list for the picker |
+| `GET /health` | Status and number of interaction pairs loaded |
 
 ## What's built
 

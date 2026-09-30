@@ -66,6 +66,10 @@ def parse_bundle(patient_id: str, bundle: dict[str, Any], today: Optional[date] 
     return ctx
 
 
+def summary(ctx: PatientContext) -> dict[str, Any]:
+    return {"patient_id": ctx.patient_id, "age": ctx.age, "conditions": [c.display for c in ctx.conditions]}
+
+
 class FhirPatientSource:
     """Fetch from a FHIR server, e.g. HAPI at http://localhost:8080/fhir."""
 
@@ -80,6 +84,17 @@ class FhirPatientSource:
         resp.raise_for_status()
         return parse_bundle(patient_id, resp.json())
 
+    def list(self, limit: int = 50) -> list[dict[str, Any]]:
+        """Patient picker: ids and ages only (conditions need one request per patient)."""
+        resp = self.client.get(f"{self.base_url}/Patient", params={"_count": limit, "_elements": "id,birthDate"})
+        resp.raise_for_status()
+        out = []
+        for e in resp.json().get("entry", []):
+            r = e["resource"]
+            out.append({"patient_id": r["id"], "age": _age(r["birthDate"]) if r.get("birthDate") else None,
+                        "conditions": []})
+        return out
+
 
 class FilePatientSource:
     """Read <patient_id>.json FHIR bundles from a folder (dev and tests)."""
@@ -93,3 +108,11 @@ class FilePatientSource:
         if not path.exists():
             return None
         return parse_bundle(patient_id, json.loads(path.read_text()), self.today)
+
+    def list(self, limit: int = 50) -> list[dict[str, Any]]:
+        out = []
+        for path in sorted(self.folder.glob("*.json"))[:limit]:
+            ctx = self.get(path.stem)
+            if ctx:
+                out.append(summary(ctx))
+        return out

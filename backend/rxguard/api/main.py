@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -36,3 +36,13 @@ def check(req: CheckRequest, p: Pipeline = Depends(get_pipeline)):
         return p.check(req.drug_a, req.drug_b, req.patient_id)
     except CheckError as e:
         raise HTTPException(status_code=e.status, detail=e.detail)
+
+
+@app.get("/drugs")
+def drugs(q: str = Query("", max_length=60), p: Pipeline = Depends(get_pipeline)):
+    return {"suggestions": p.suggest_drugs(q)}
+
+
+@app.get("/patients")
+def patients(p: Pipeline = Depends(get_pipeline)):
+    return {"patients": p.list_patients()}
