@@ -19,6 +19,10 @@ backend, set `RXGUARD_API=http://host:port` for `npm run dev`, or `VITE_API_URL`
 
 `npm run build` writes a static site to `dist/` (e.g. for Vercel).
 
+`npm run build:demo` builds a server-free demo into `dist-demo/`: `src/demoApi.js` runs the same
+rules, drug flags and three demo patients in the browser, so the UI can be shared as a link. Keep
+it in step with `backend/config/` if you change the rules.
+
 ## Layout
 
 | File | What it is |

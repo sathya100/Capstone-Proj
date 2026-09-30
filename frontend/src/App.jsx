@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ApiError, api } from "./api";
+import { ApiError, DEMO, api } from "./api";
 import DrugInput from "./components/DrugInput";
 import PatientSelect from "./components/PatientSelect";
 import ResultPanel from "./components/ResultPanel";
@@ -112,6 +112,12 @@ export default function App() {
           <p className="text-lg mb-5 max-w-prose">
             Check how risky two medicines are together for a specific patient.
           </p>
+          {DEMO && (
+            <p className="text-base mb-5 max-w-prose border-l-4 border-act pl-3">
+              Demo version: runs in your browser with three synthetic patients (P-1042, P-2210, P-3301) and one example
+              interaction, acetaminophen with warfarin. Try Tylenol, Coumadin, Advil or Glucophage.
+            </p>
+          )}
           <div className="grid gap-4 md:grid-cols-[1fr_1fr_1.4fr]">
             <DrugInput label="First medicine" value={drugA} onChange={setDrugA} placeholder="Brand or generic name" />
             <DrugInput label="Second medicine" value={drugB} onChange={setDrugB} placeholder="Brand or generic name" />
