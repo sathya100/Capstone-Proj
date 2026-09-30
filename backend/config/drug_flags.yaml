@@ -1,0 +1,70 @@
+# Per-drug flags for the rules engine (FR-10).
+# SEED DATA ONLY — a handful of common drugs so the pipeline runs end to end.
+# The real file (top ~150 drugs) comes from offline pipeline 4: LLM extraction from openFDA
+# labels, then hand-checked. Every entry below must be verified against its FDA label before
+# submission; set verified: true once checked and record the label section used.
+
+drugs:
+  acetaminophen:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: []          # liver disease is scored by the liver rule, not here
+    verified: false
+  warfarin:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: [peptic_ulcer]
+    verified: false
+  ibuprofen:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: [heart_failure, hypertension, peptic_ulcer]
+    verified: false
+  aspirin:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: [peptic_ulcer]
+    verified: false
+  metformin:
+    liver_metabolised: false
+    kidney_cleared: true
+    condition_cautions: [heart_failure]
+    verified: false
+  lisinopril:
+    liver_metabolised: false
+    kidney_cleared: true
+    condition_cautions: []
+    verified: false
+  gabapentin:
+    liver_metabolised: false
+    kidney_cleared: true
+    condition_cautions: []
+    verified: false
+  simvastatin:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: []
+    verified: false
+  clarithromycin:
+    liver_metabolised: true
+    kidney_cleared: false
+    condition_cautions: []
+    verified: false
+
+# Condition groups: how a FHIR Condition (usually SNOMED from Synthea) maps to a caution key.
+# Matching is by SNOMED code if listed, else by case-insensitive keyword in the display text.
+# liver_disease and chronic_kidney_disease feed the organ rules and are never double-counted
+# as condition cautions.
+condition_groups:
+  liver_disease:
+    keywords: [liver, hepat, cirrhosis]
+    organ_rule: liver
+  chronic_kidney_disease:
+    keywords: [chronic kidney disease, renal failure, renal insufficiency]
+    organ_rule: kidney
+  heart_failure:
+    keywords: [heart failure]
+  hypertension:
+    keywords: [hypertension]
+  peptic_ulcer:
+    keywords: [peptic ulcer, gastric ulcer, duodenal ulcer, gastrointestinal hemorrhage]

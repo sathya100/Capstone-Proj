@@ -1,0 +1,38 @@
+# RxGuard scoring rules (FR-08, FR-10, NFR-05).
+# Weights are a starting design; tuning them against the evaluation scenarios is part of the project.
+
+base_severity_points:
+  Major: 6
+  Moderate: 4
+  Minor: 2
+  None: 0
+
+condition_caution_points: 2      # per patient condition listed as a caution for either drug
+
+age:
+  threshold: 65                  # age >= threshold
+  points: 1
+
+kidney:
+  egfr_below: 60                 # eGFR < 60 mL/min/1.73m2
+  points: 2                      # only if a drug is kidney-cleared
+
+liver:
+  alt_uln: 40                    # ALT upper limit of normal (U/L); confirm against your lab reference
+  alt_multiple: 3                # ALT > 3 x ULN
+  points: 2                      # liver disease OR high ALT, and a drug is liver-metabolised
+
+alcohol:
+  drinks_per_day_at_least: 3
+  drug: acetaminophen
+  points: 2
+
+max_score: 10
+
+bands:                           # inclusive lower bounds, checked top-down
+  - {name: High, min: 7}
+  - {name: Moderate, min: 4}
+  - {name: Low, min: 0}
+
+ml:
+  min_confidence: 0.6            # NFR-03: below this an unknown pair is "Unknown — consult a pharmacist", never Low

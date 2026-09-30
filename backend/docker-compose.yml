@@ -1,0 +1,12 @@
+# One-command setup (NFR-10). Start: docker compose up --build
+services:
+  fhir:
+    image: hapiproject/hapi:latest
+    ports: ["8080:8080"]
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      RXGUARD_FHIR_URL: http://fhir:8080/fhir   # remove to use data/patients/*.json fixtures
+    volumes: ["./data:/app/data"]
+    depends_on: [fhir]
