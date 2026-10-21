@@ -55,6 +55,8 @@ def main(argv=None) -> None:
     pairs = load_pairs(Path(args.db))
     if args.max_pairs and len(pairs) > args.max_pairs:
         pairs = random.Random(args.seed).sample(pairs, args.max_pairs)
+    if not Path(args.smiles).exists():
+        sys.exit(f"No {args.smiles}: run scripts/fetch_smiles.py first (needs internet access to PubChem).")
     smiles = json.loads(Path(args.smiles).read_text())
     print(f"{len(pairs)} pairs, {sum(1 for v in smiles.values() if v)} drugs with SMILES")
 
@@ -63,6 +65,9 @@ def main(argv=None) -> None:
     pairs = [p for p in pairs if p[0] in fps and p[1] in fps]
     print(f"{len(fps)} fingerprints; {len(pairs)} pairs where both drugs have one ({time.time()-t0:.0f}s)")
 
+    if len(pairs) < 100:
+        sys.exit(f"Only {len(pairs)} DDInter pairs have SMILES for both drugs; load DDInter "
+                 "(scripts/load_ddinter.py) and fetch SMILES (scripts/fetch_smiles.py) first.")
     t0 = time.time()
     bundle, report = train_and_evaluate(pairs, fps, args.model, args.target_major_recall, min_conf, args.seed)
     report["train_seconds"] = round(time.time() - t0)
