@@ -22,13 +22,14 @@ async function request(path, options) {
   return body;
 }
 
+const post = (path, body) =>
+  request(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
 const realApi = {
-  check: (drug_a, drug_b, patient_id) =>
-    request("/check", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ drug_a, drug_b, patient_id }),
-    }),
+  // Score first, without the explanation, so it shows in under a second (NFR-01) …
+  check: (drug_a, drug_b, patient_id) => post("/check", { drug_a, drug_b, patient_id, explain: false }),
+  // … then the cited FDA-label explanation, which depends only on the drug pair.
+  explain: (drug_a, drug_b) => post("/explain", { drug_a, drug_b }),
   suggest: (q) => request(`/drugs?q=${encodeURIComponent(q)}`).then((r) => r.suggestions),
   patients: () => request("/patients").then((r) => r.patients),
 };
@@ -45,5 +46,10 @@ async function demo(fn, ...args) {
 }
 
 export const api = DEMO
-  ? { check: (...a) => demo("check", ...a), suggest: (q) => demo("suggest", q), patients: () => demo("patients") }
+  ? {
+      check: (...a) => demo("check", ...a),
+      explain: async () => ({ explanation: { status: "demo", sentences: [], sources: [], dropped: [] } }),
+      suggest: (q) => demo("suggest", q),
+      patients: () => demo("patients"),
+    }
   : realApi;

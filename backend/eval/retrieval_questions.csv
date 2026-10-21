@@ -1,0 +1,9 @@
+drug_a,drug_b,expected_drug,expected_section
+warfarin,acetaminophen,warfarin,drug_interactions
+acetaminophen,warfarin,acetaminophen,ask_doctor_or_pharmacist
+warfarin,aspirin,warfarin,drug_interactions
+warfarin,ibuprofen,warfarin,drug_interactions
+simvastatin,clarithromycin,simvastatin,contraindications
+clarithromycin,simvastatin,clarithromycin,contraindications
+lisinopril,ibuprofen,lisinopril,drug_interactions
+metformin,lisinopril,metformin,drug_interactions

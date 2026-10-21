@@ -25,27 +25,56 @@ function PatientFacts({ p }) {
   );
 }
 
+function Refs({ nums }) {
+  return (
+    <sup className="ml-0.5 text-xs font-bold text-act">
+      {nums.map((n, i) => <a key={n} href={`#src-${n}`} className="no-underline">{i > 0 && ","}[{n}]</a>)}
+    </sup>
+  );
+}
+
 function Explanation({ r }) {
-  if (!r.mechanism) {
-    return (
-      <p className="text-base text-muted">
-        A plain-language explanation quoting the FDA labels for {r.drugs.join(" and ")} will appear here once the
-        explainer is built. Until then, the score and every point in it come from the rules above.
-      </p>
-    );
+  const ex = r.explanation;
+  const muted = (text) => <p className="text-base text-muted max-w-prose">{text}</p>;
+
+  if (!ex || ex.status === "demo") {
+    return muted(<>The demo link runs without a server, so it has no FDA label index. Run the backend to see an
+      explanation quoting the labels for {r.drugs.join(" and ")}. The score above comes from the rules either way.</>);
   }
+  if (ex.status === "pending") return muted("Finding the relevant FDA label passages…");
+  if (ex.status !== "ok") return muted(ex.message ?? "No explanation is available for this pair.");
+
+  const mech = ex.sentences.filter((s) => s.part === "mechanism");
+  const mon = ex.sentences.filter((s) => s.part === "monitoring");
+  const quoted = ex.provider === "extractive";
+
   return (
     <div className="space-y-3 text-base max-w-prose">
-      <p>{r.mechanism}</p>
-      {r.monitoring?.length > 0 && (
+      {mech.length > 0 && <p>{mech.map((s) => <span key={s.text}>{s.text}<Refs nums={s.sources} /> </span>)}</p>}
+      {mon.length > 0 && (
         <div>
           <h4 className="font-bold">What to monitor</h4>
-          <ul className="list-disc pl-5">{r.monitoring.map((m) => <li key={m}>{m}</li>)}</ul>
+          <ul className="list-disc pl-5">{mon.map((s) => <li key={s.text}>{s.text}<Refs nums={s.sources} /></li>)}</ul>
         </div>
       )}
-      {r.citations?.length > 0 && (
-        <p className="text-sm text-muted">Sources: {r.citations.join("; ")}</p>
-      )}
+      <div>
+        <h4 className="font-bold text-sm">Sources</h4>
+        <ol className="text-sm text-muted space-y-1">
+          {ex.sources.map((s) => (
+            <li key={s.n} id={`src-${s.n}`}>
+              <details>
+                <summary className="cursor-pointer">[{s.n}] {s.citation}</summary>
+                <blockquote className="mt-1 pl-3 border-l-2 border-rule">{s.text}</blockquote>
+              </details>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <p className="text-xs text-muted">
+        {quoted ? "Sentences quoted directly from the FDA labels." : `Written by ${ex.provider} from the label passages only.`}
+        {" "}Every sentence cites its source
+        {ex.dropped?.length > 0 && `; ${ex.dropped.length} unsupported ${ex.dropped.length === 1 ? "sentence was" : "sentences were"} removed`}.
+      </p>
     </div>
   );
 }
