@@ -88,12 +88,12 @@ Or run the backend with Docker (API + HAPI FHIR server): `cd backend && docker c
 |---|---|---|
 | Name normalisation | FR-01–03 | ✅ Done |
 | Interaction store (DDInter) | FR-04 | ✅ Done — real DDInter data not yet loaded |
-| ML severity predictor | FR-05 | ✅ Code done — train it once DDInter + PubChem data are downloaded |
+| ML severity predictor | FR-05 | ✅ Trained on real DDInter data (261 drugs, 16,073 pairs): Random Forest macro F1 0.685 on unseen drugs vs 0.272 baseline — [results](docs/ml_results.html) |
 | Patient context (FHIR) | FR-06–07 | ✅ Done — Synthea patients not yet generated |
 | Rules engine | FR-08–10 | ✅ Done |
 | RAG explainer | FR-11–13 | ✅ Code done — run `fetch_labels.py` to download the FDA labels |
 | Web UI | FR-14–17 | ✅ Done — score first, cited explanation streams in after |
-| Evaluation | — | Scripts ready (`train_predictor.py` metrics, `eval_explainer.py`); numbers pending real data |
+| Evaluation | — | ML metrics in `docs/results/`; explainer metrics pending FDA labels |
 
 76 backend tests pass. Remaining work is data and measurement: load DDInter, fetch SMILES and FDA
 labels, generate Synthea patients, verify `drug_flags.yaml`, then run the evaluation. See

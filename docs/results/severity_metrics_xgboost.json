@@ -1,0 +1,130 @@
+{
+  "model": "xgboost",
+  "split": {
+    "train_pairs": 8286,
+    "val_pairs": 2263,
+    "test_pairs": 5524,
+    "test_drugs": 52,
+    "val_drugs": 26,
+    "rule": "test pairs contain at least one drug unseen in training"
+  },
+  "major_guard": 0.1278894692659378,
+  "min_confidence": 0.6,
+  "test": {
+    "n": 5524,
+    "macro_f1": 0.6485,
+    "per_class": {
+      "Major": {
+        "precision": 0.6728,
+        "recall": 0.6186,
+        "f1": 0.6446,
+        "support": 1602
+      },
+      "Moderate": {
+        "precision": 0.8924,
+        "recall": 0.6745,
+        "f1": 0.7683,
+        "support": 3800
+      },
+      "Minor": {
+        "precision": 0.6883,
+        "recall": 0.4344,
+        "f1": 0.5327,
+        "support": 122
+      }
+    },
+    "major_recall": 0.6186,
+    "major_safe_recall": 0.8252,
+    "coverage": 0.7618
+  },
+  "test_no_guard": {
+    "n": 5524,
+    "macro_f1": 0.6754,
+    "per_class": {
+      "Major": {
+        "precision": 0.6728,
+        "recall": 0.6186,
+        "f1": 0.6446,
+        "support": 1602
+      },
+      "Moderate": {
+        "precision": 0.8359,
+        "recall": 0.8737,
+        "f1": 0.8543,
+        "support": 3800
+      },
+      "Minor": {
+        "precision": 0.6709,
+        "recall": 0.4344,
+        "f1": 0.5274,
+        "support": 122
+      }
+    },
+    "major_recall": 0.6186,
+    "major_safe_recall": 0.6704,
+    "coverage": 0.9167
+  },
+  "baselines": {
+    "majority_class": {
+      "n": 5524,
+      "macro_f1": 0.2717,
+      "per_class": {
+        "Major": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1602
+        },
+        "Moderate": {
+          "precision": 0.6879,
+          "recall": 1.0,
+          "f1": 0.8151,
+          "support": 3800
+        },
+        "Minor": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 122
+        }
+      },
+      "major_recall": 0.0
+    },
+    "logistic_regression": {
+      "n": 5524,
+      "macro_f1": 0.4837,
+      "per_class": {
+        "Major": {
+          "precision": 0.4897,
+          "recall": 0.5961,
+          "f1": 0.5377,
+          "support": 1602
+        },
+        "Moderate": {
+          "precision": 0.8111,
+          "recall": 0.67,
+          "f1": 0.7338,
+          "support": 3800
+        },
+        "Minor": {
+          "precision": 0.1149,
+          "recall": 0.4098,
+          "f1": 0.1795,
+          "support": 122
+        }
+      },
+      "major_recall": 0.5961
+    }
+  },
+  "targets": {
+    "macro_f1": 0.7,
+    "major_recall": 0.9,
+    "major_safe_recall": 0.9
+  },
+  "meets_targets": {
+    "macro_f1": false,
+    "major_recall": false,
+    "major_safe_recall": false
+  },
+  "train_seconds": 57
+}

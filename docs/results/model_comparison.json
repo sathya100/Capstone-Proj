@@ -1,0 +1,3116 @@
+{
+ "logreg": {
+  "eval": {
+   "n": 5524,
+   "macro_f1": 0.4291,
+   "per_class": {
+    "Major": {
+     "precision": 0.4897,
+     "recall": 0.5961,
+     "f1": 0.5377,
+     "support": 1602
+    },
+    "Moderate": {
+     "precision": 0.8768,
+     "recall": 0.3708,
+     "f1": 0.5212,
+     "support": 3800
+    },
+    "Minor": {
+     "precision": 0.1596,
+     "recall": 0.4016,
+     "f1": 0.2284,
+     "support": 122
+    }
+   },
+   "major_recall": 0.5961,
+   "major_safe_recall": 0.8752,
+   "coverage": 0.6278
+  },
+  "raw_macro_f1": 0.4837,
+  "raw_major_recall": 0.5961,
+  "guard": 0.0899954908050921,
+  "confusion": [
+   [
+    955,
+    169,
+    45,
+    433
+   ],
+   [
+    959,
+    1409,
+    213,
+    1219
+   ],
+   [
+    36,
+    29,
+    49,
+    8
+   ]
+  ]
+ },
+ "hgb": {
+  "eval": {
+   "n": 5524,
+   "macro_f1": 0.5596,
+   "per_class": {
+    "Major": {
+     "precision": 0.596,
+     "recall": 0.6105,
+     "f1": 0.6031,
+     "support": 1602
+    },
+    "Moderate": {
+     "precision": 0.8783,
+     "recall": 0.5889,
+     "f1": 0.7051,
+     "support": 3800
+    },
+    "Minor": {
+     "precision": 0.3037,
+     "recall": 0.4754,
+     "f1": 0.3706,
+     "support": 122
+    }
+   },
+   "major_recall": 0.6105,
+   "major_safe_recall": 0.8233,
+   "coverage": 0.6861
+  },
+  "raw_macro_f1": 0.5851,
+  "raw_major_recall": 0.6105,
+  "guard": 0.22289345070002214,
+  "confusion": [
+   [
+    978,
+    280,
+    28,
+    316
+   ],
+   [
+    645,
+    2238,
+    105,
+    812
+   ],
+   [
+    18,
+    30,
+    58,
+    16
+   ]
+  ]
+ },
+ "rf": {
+  "eval": {
+   "n": 5524,
+   "macro_f1": 0.6539,
+   "per_class": {
+    "Major": {
+     "precision": 0.6921,
+     "recall": 0.5599,
+     "f1": 0.619,
+     "support": 1602
+    },
+    "Moderate": {
+     "precision": 0.9041,
+     "recall": 0.6426,
+     "f1": 0.7513,
+     "support": 3800
+    },
+    "Minor": {
+     "precision": 0.8594,
+     "recall": 0.4508,
+     "f1": 0.5914,
+     "support": 122
+    }
+   },
+   "major_recall": 0.5599,
+   "major_safe_recall": 0.8689,
+   "coverage": 0.6193
+  },
+  "raw_macro_f1": 0.6846,
+  "raw_major_recall": 0.5599,
+  "guard": 0.3014277904280235,
+  "confusion": [
+   [
+    897,
+    225,
+    2,
+    478
+   ],
+   [
+    384,
+    2442,
+    7,
+    967
+   ],
+   [
+    15,
+    34,
+    55,
+    18
+   ]
+  ]
+ },
+ "examples": [
+  {
+   "a": "acetaminophen",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "acetaminophen",
+   "b": "apalutamide",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "acetaminophen",
+   "b": "methotrexate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "acetaminophen",
+   "b": "deferasirox",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.62
+  },
+  {
+   "a": "acetaminophen",
+   "b": "ethinylestradiol",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "acetaminophen",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "acetaminophen",
+   "b": "metoclopramide",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "clarithromycin",
+   "b": "warfarin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "teriflunomide",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "apalutamide",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.65
+  },
+  {
+   "a": "methotrexate",
+   "b": "warfarin",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.62
+  },
+  {
+   "a": "deferasirox",
+   "b": "warfarin",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "panobinostat",
+   "b": "warfarin",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "hydrocortisone",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "doxorubicin",
+   "b": "warfarin",
+   "truth": "Minor",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "fostamatinib",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "levofloxacin",
+   "b": "warfarin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "glipizide",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.79
+  },
+  {
+   "a": "glimepiride",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "troglitazone",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "ethinylestradiol",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "deflazacort",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "romidepsin",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.63
+  },
+  {
+   "a": "ibrutinib",
+   "b": "warfarin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.62
+  },
+  {
+   "a": "fenfluramine",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "venetoclax",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "vandetanib",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "tetracosactide",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "iloprost",
+   "b": "warfarin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "ibuprofen",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "ibuprofen",
+   "b": "sirolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.62
+  },
+  {
+   "a": "apalutamide",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "ibuprofen",
+   "b": "methotrexate",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.62
+  },
+  {
+   "a": "deferasirox",
+   "b": "ibuprofen",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "ibuprofen",
+   "b": "panobinostat",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "hydrocortisone",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.89
+  },
+  {
+   "a": "ibuprofen",
+   "b": "levofloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "glipizide",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "glimepiride",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "ibuprofen",
+   "b": "tolazamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.79
+  },
+  {
+   "a": "deflazacort",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.79
+  },
+  {
+   "a": "ibuprofen",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "acetohexamide",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "ibrutinib",
+   "b": "ibuprofen",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.65
+  },
+  {
+   "a": "ibuprofen",
+   "b": "ruxolitinib",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "baricitinib",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "fenfluramine",
+   "b": "ibuprofen",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.63
+  },
+  {
+   "a": "ibuprofen",
+   "b": "iloprost",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "ibuprofen",
+   "b": "pemetrexed",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "clarithromycin",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.38
+  },
+  {
+   "a": "alimemazine",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "metformin",
+   "b": "sirolimus",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "brigatinib",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "hydrocortisone",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "encorafenib",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "levofloxacin",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "glipizide",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "glimepiride",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "metformin",
+   "b": "tolazamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "ethinylestradiol",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "deflazacort",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.65
+  },
+  {
+   "a": "metformin",
+   "b": "salbutamol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.79
+  },
+  {
+   "a": "acetohexamide",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "insulin glargine",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.94
+  },
+  {
+   "a": "fenfluramine",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "fluphenazine",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "insulin human",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.94
+  },
+  {
+   "a": "metformin",
+   "b": "vandetanib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.64
+  },
+  {
+   "a": "metformin",
+   "b": "tetracosactide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.77
+  },
+  {
+   "a": "metformin",
+   "b": "thioridazine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "metformin",
+   "b": "pemetrexed",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "goserelin",
+   "b": "metformin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "simvastatin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.45
+  },
+  {
+   "a": "simvastatin",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "simvastatin",
+   "b": "sirolimus",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "apalutamide",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "methotrexate",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "deferasirox",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "brigatinib",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "encorafenib",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "fostamatinib",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "simvastatin",
+   "b": "troglitazone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "simvastatin",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "eribulin",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "palbociclib",
+   "b": "simvastatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ozanimod",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "idelalisib",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.65
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tacrolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.62
+  },
+  {
+   "a": "clarithromycin",
+   "b": "thalidomide",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "promethazine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dasatinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "nilotinib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.67
+  },
+  {
+   "a": "ceritinib",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.77
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dexamethasone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.93
+  },
+  {
+   "a": "clarithromycin",
+   "b": "cyclosporine",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "clarithromycin",
+   "b": "doxepin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "clarithromycin",
+   "b": "rucaparib",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ribociclib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "imatinib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "clarithromycin",
+   "b": "erythromycin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.47
+  },
+  {
+   "a": "clarithromycin",
+   "b": "siponimod",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.86
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "enzalutamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "crizotinib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "alimemazine",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "clarithromycin",
+   "b": "lapatinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.65
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sirolimus",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "clarithromycin",
+   "b": "temsirolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.61
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vemurafenib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.69
+  },
+  {
+   "a": "apalutamide",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "clarithromycin",
+   "b": "methotrexate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "clarithromycin",
+   "b": "hydrocodone",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.59
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sibutramine",
+   "truth": "Minor",
+   "pred": "Minor",
+   "conf": 0.63
+  },
+  {
+   "a": "clarithromycin",
+   "b": "deferasirox",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "clarithromycin",
+   "b": "panobinostat",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fluconazole",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "pazopanib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "brigatinib",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "midostaurin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fingolimod",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "leflunomide",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.81
+  },
+  {
+   "a": "clarithromycin",
+   "b": "epirubicin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "oxaliplatin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "bexarotene",
+   "b": "clarithromycin",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "clarithromycin",
+   "b": "osimertinib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "hydrocortisone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "entrectinib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.63
+  },
+  {
+   "a": "clarithromycin",
+   "b": "picosulfuric acid",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "prednisolone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.93
+  },
+  {
+   "a": "clarithromycin",
+   "b": "repaglinide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "lorlatinib",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "cabozantinib",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "prednisone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.89
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fedratinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "chloroquine",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.82
+  },
+  {
+   "a": "clarithromycin",
+   "b": "methylprednisolone",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.85
+  },
+  {
+   "a": "betamethasone",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.93
+  },
+  {
+   "a": "clarithromycin",
+   "b": "triamcinolone",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.92
+  },
+  {
+   "a": "clarithromycin",
+   "b": "glyburide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tofacitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "clarithromycin",
+   "b": "trabectedin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "clarithromycin",
+   "b": "encorafenib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "clarithromycin",
+   "b": "doxorubicin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ponatinib",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tolbutamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fludrocortisone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fostamatinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "clarithromycin",
+   "b": "olaparib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "clarithromycin",
+   "b": "clofarabine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "indacaterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "chlorpropamide",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "levofloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.62
+  },
+  {
+   "a": "clarithromycin",
+   "b": "gilteritinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dicoumarol",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "clarithromycin",
+   "b": "glipizide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "glimepiride",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "hydroxychloroquine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.8
+  },
+  {
+   "a": "clarithromycin",
+   "b": "larotrectinib",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "troglitazone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ticagrelor",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "clarithromycin",
+   "b": "cobicistat",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dabrafenib",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tolazamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.61
+  },
+  {
+   "a": "cimetidine",
+   "b": "clarithromycin",
+   "truth": "Minor",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "cilostazol",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.62
+  },
+  {
+   "a": "clarithromycin",
+   "b": "quinine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.63
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ivosidenib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "bosutinib",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.68
+  },
+  {
+   "a": "clarithromycin",
+   "b": "osilodrostat",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ethinylestradiol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.65
+  },
+  {
+   "a": "clarithromycin",
+   "b": "terbutaline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "clarithromycin",
+   "b": "deflazacort",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "nateglinide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.65
+  },
+  {
+   "a": "clarithromycin",
+   "b": "salbutamol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sunitinib",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "salmeterol",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "glasdegib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "aprepitant",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "daunorubicin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.85
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vilanterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "clarithromycin",
+   "b": "clozapine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "clarithromycin",
+   "b": "idarubicin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "abiraterone",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "everolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "somatrem",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.87
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.39
+  },
+  {
+   "a": "clarithromycin",
+   "b": "tamoxifen",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ivacaftor",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "romidepsin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "clarithromycin",
+   "b": "orciprenaline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.8
+  },
+  {
+   "a": "clarithromycin",
+   "b": "eribulin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "anagrelide",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sorafenib",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "formoterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "magnesium hydroxide",
+   "truth": "Moderate",
+   "pred": "Minor",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "empagliflozin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "clarithromycin",
+   "b": "isoprenaline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "mefloquine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "acetohexamide",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.61
+  },
+  {
+   "a": "clarithromycin",
+   "b": "pasireotide",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.8
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sodium sulfate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "clarithromycin",
+   "b": "saxagliptin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "clarithromycin",
+   "b": "upadacitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin detemir",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin glulisine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.82
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin degludec",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin glargine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin lispro",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "clarithromycin",
+   "b": "toremifene",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.69
+  },
+  {
+   "a": "clarithromycin",
+   "b": "docetaxel",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "acalabrutinib",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.63
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vinblastine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.75
+  },
+  {
+   "a": "canagliflozin",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vinorelbine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dolasetron",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.8
+  },
+  {
+   "a": "clarithromycin",
+   "b": "pentamidine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "clarithromycin",
+   "b": "dapagliflozin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "clarithromycin",
+   "b": "phenytoin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ibrutinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ertugliflozin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.45
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ruxolitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.51
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vincristine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "bortezomib",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.63
+  },
+  {
+   "a": "clarithromycin",
+   "b": "granisetron",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "pirbuterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "bicalutamide",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.82
+  },
+  {
+   "a": "clarithromycin",
+   "b": "macimorelin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "olodaterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "exenatide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "apixaban",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "ciprofloxacin",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "metronidazole",
+   "truth": "Minor",
+   "pred": "Minor",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "loperamide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "paclitaxel",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ondansetron",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "budesonide",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.89
+  },
+  {
+   "a": "clarithromycin",
+   "b": "elagolix",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "clarithromycin",
+   "b": "rivaroxaban",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.62
+  },
+  {
+   "a": "clarithromycin",
+   "b": "pioglitazone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "clarithromycin",
+   "b": "palbociclib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "clarithromycin",
+   "b": "irinotecan",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "clarithromycin",
+   "b": "naltrexone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.8
+  },
+  {
+   "a": "cisapride",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.79
+  },
+  {
+   "a": "clarithromycin",
+   "b": "linagliptin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fluphenazine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "amiodarone",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.78
+  },
+  {
+   "a": "clarithromycin",
+   "b": "insulin human",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.83
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fosphenytoin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "clarithromycin",
+   "b": "venetoclax",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "clarithromycin",
+   "b": "saquinavir",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "vandetanib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "clarithromycin",
+   "b": "efavirenz",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "clarithromycin",
+   "b": "terfenadine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "grepafloxacin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.65
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ritonavir",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.66
+  },
+  {
+   "a": "clarithromycin",
+   "b": "eliglustat",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "voriconazole",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "famotidine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "clarithromycin",
+   "b": "palonosetron",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "citalopram",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "clarithromycin",
+   "b": "clomipramine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "primaquine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "carbamazepine",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "clarithromycin",
+   "b": "rosiglitazone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "clarithromycin",
+   "b": "moxifloxacin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "clarithromycin",
+   "b": "thioridazine",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "astemizole",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.61
+  },
+  {
+   "a": "cabazitaxel",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ixabepilone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.78
+  },
+  {
+   "a": "clarithromycin",
+   "b": "escitalopram",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "chlorpromazine",
+   "b": "clarithromycin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "clarithromycin",
+   "b": "halofantrine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.79
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fluvoxamine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.44
+  },
+  {
+   "a": "clarithromycin",
+   "b": "norfloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "clarithromycin",
+   "b": "ofloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.62
+  },
+  {
+   "a": "arsenic trioxide",
+   "b": "clarithromycin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "clarithromycin",
+   "b": "fluoxetine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sitagliptin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.59
+  },
+  {
+   "a": "clarithromycin",
+   "b": "trifluoperazine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "gemifloxacin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "clarithromycin",
+   "b": "goserelin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "clarithromycin",
+   "b": "triptorelin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.77
+  },
+  {
+   "a": "clarithromycin",
+   "b": "flutamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.75
+  },
+  {
+   "a": "clarithromycin",
+   "b": "cobimetinib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.64
+  },
+  {
+   "a": "clarithromycin",
+   "b": "gatifloxacin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.67
+  },
+  {
+   "a": "clarithromycin",
+   "b": "histrelin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.64
+  },
+  {
+   "a": "ketoconazole",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "ketoconazole",
+   "b": "sirolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.6
+  },
+  {
+   "a": "apalutamide",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "ketoconazole",
+   "b": "methotrexate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.47
+  },
+  {
+   "a": "deferasirox",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "ketoconazole",
+   "b": "panobinostat",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "brigatinib",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.72
+  },
+  {
+   "a": "hydrocortisone",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "encorafenib",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "doxorubicin",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "fostamatinib",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "ketoconazole",
+   "b": "levofloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.65
+  },
+  {
+   "a": "ethinylestradiol",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "deflazacort",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "ketoconazole",
+   "b": "salbutamol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.74
+  },
+  {
+   "a": "glasdegib",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "ketoconazole",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.44
+  },
+  {
+   "a": "ketoconazole",
+   "b": "romidepsin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "eribulin",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.48
+  },
+  {
+   "a": "ketoconazole",
+   "b": "upadacitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "ibrutinib",
+   "b": "ketoconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "ketoconazole",
+   "b": "ruxolitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "ketoconazole",
+   "b": "pirbuterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.68
+  },
+  {
+   "a": "ketoconazole",
+   "b": "palbociclib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.65
+  },
+  {
+   "a": "fluphenazine",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.62
+  },
+  {
+   "a": "ketoconazole",
+   "b": "venetoclax",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.46
+  },
+  {
+   "a": "ketoconazole",
+   "b": "vandetanib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.6
+  },
+  {
+   "a": "ketoconazole",
+   "b": "primaquine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "ketoconazole",
+   "b": "thioridazine",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "ketoconazole",
+   "b": "roflumilast",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "goserelin",
+   "b": "ketoconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.69
+  },
+  {
+   "a": "alimemazine",
+   "b": "fluconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.82
+  },
+  {
+   "a": "alimemazine",
+   "b": "amiodarone",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.73
+  },
+  {
+   "a": "alimemazine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.79
+  },
+  {
+   "a": "fluconazole",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "amiodarone",
+   "b": "teriflunomide",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.82
+  },
+  {
+   "a": "fluconazole",
+   "b": "sirolimus",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.61
+  },
+  {
+   "a": "amiodarone",
+   "b": "sirolimus",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.59
+  },
+  {
+   "a": "sertraline",
+   "b": "sirolimus",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "apalutamide",
+   "b": "fluconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "amiodarone",
+   "b": "apalutamide",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.66
+  },
+  {
+   "a": "apalutamide",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "fluconazole",
+   "b": "methotrexate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "amiodarone",
+   "b": "methotrexate",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "amiodarone",
+   "b": "deferasirox",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.7
+  },
+  {
+   "a": "deferasirox",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "fluconazole",
+   "b": "panobinostat",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "amiodarone",
+   "b": "panobinostat",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.63
+  },
+  {
+   "a": "panobinostat",
+   "b": "sertraline",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "brigatinib",
+   "b": "fluconazole",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.65
+  },
+  {
+   "a": "fluconazole",
+   "b": "hydrocortisone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.86
+  },
+  {
+   "a": "encorafenib",
+   "b": "fluconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "doxorubicin",
+   "b": "fluconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.95
+  },
+  {
+   "a": "fluconazole",
+   "b": "fostamatinib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "fluconazole",
+   "b": "levofloxacin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "fluconazole",
+   "b": "glipizide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "fluconazole",
+   "b": "glimepiride",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "fluconazole",
+   "b": "tolazamide",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "ethinylestradiol",
+   "b": "fluconazole",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.66
+  },
+  {
+   "a": "deflazacort",
+   "b": "fluconazole",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "fluconazole",
+   "b": "salbutamol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.86
+  },
+  {
+   "a": "fluconazole",
+   "b": "glasdegib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "fluconazole",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "fluconazole",
+   "b": "romidepsin",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.55
+  },
+  {
+   "a": "eribulin",
+   "b": "fluconazole",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "acetohexamide",
+   "b": "fluconazole",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.45
+  },
+  {
+   "a": "fluconazole",
+   "b": "upadacitinib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "fluconazole",
+   "b": "ibrutinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "fluconazole",
+   "b": "ruxolitinib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "fluconazole",
+   "b": "pirbuterol",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.8
+  },
+  {
+   "a": "fluconazole",
+   "b": "palbociclib",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.63
+  },
+  {
+   "a": "fluconazole",
+   "b": "fluphenazine",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "fluconazole",
+   "b": "venetoclax",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "fluconazole",
+   "b": "vandetanib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.49
+  },
+  {
+   "a": "fluconazole",
+   "b": "primaquine",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "fluconazole",
+   "b": "thioridazine",
+   "truth": "Major",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "fluconazole",
+   "b": "goserelin",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.78
+  },
+  {
+   "a": "amiodarone",
+   "b": "brigatinib",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.76
+  },
+  {
+   "a": "amiodarone",
+   "b": "hydrocortisone",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "amiodarone",
+   "b": "codeine",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.64
+  },
+  {
+   "a": "codeine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.7
+  },
+  {
+   "a": "amiodarone",
+   "b": "encorafenib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.64
+  },
+  {
+   "a": "encorafenib",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "amiodarone",
+   "b": "doxorubicin",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.91
+  },
+  {
+   "a": "doxorubicin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.86
+  },
+  {
+   "a": "amiodarone",
+   "b": "fostamatinib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.57
+  },
+  {
+   "a": "fostamatinib",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "amiodarone",
+   "b": "levofloxacin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "levofloxacin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "glipizide",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "glimepiride",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.77
+  },
+  {
+   "a": "amiodarone",
+   "b": "troglitazone",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "sertraline",
+   "b": "troglitazone",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.76
+  },
+  {
+   "a": "sertraline",
+   "b": "tolazamide",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.81
+  },
+  {
+   "a": "amiodarone",
+   "b": "salbutamol",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.56
+  },
+  {
+   "a": "salbutamol",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.86
+  },
+  {
+   "a": "amiodarone",
+   "b": "glasdegib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.65
+  },
+  {
+   "a": "glasdegib",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.62
+  },
+  {
+   "a": "amiodarone",
+   "b": "tioguanine",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.61
+  },
+  {
+   "a": "amiodarone",
+   "b": "romidepsin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.54
+  },
+  {
+   "a": "romidepsin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "amiodarone",
+   "b": "eribulin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "eribulin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.61
+  },
+  {
+   "a": "acetohexamide",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.73
+  },
+  {
+   "a": "insulin glargine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.99
+  },
+  {
+   "a": "amiodarone",
+   "b": "ibrutinib",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "ibrutinib",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "amiodarone",
+   "b": "ruxolitinib",
+   "truth": "Minor",
+   "pred": "Major",
+   "conf": 0.66
+  },
+  {
+   "a": "ruxolitinib",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.53
+  },
+  {
+   "a": "metoclopramide",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.52
+  },
+  {
+   "a": "amiodarone",
+   "b": "pirbuterol",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.6
+  },
+  {
+   "a": "pirbuterol",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.78
+  },
+  {
+   "a": "amiodarone",
+   "b": "palbociclib",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.76
+  },
+  {
+   "a": "fenfluramine",
+   "b": "sertraline",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.6
+  },
+  {
+   "a": "amiodarone",
+   "b": "venetoclax",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.5
+  },
+  {
+   "a": "amiodarone",
+   "b": "vandetanib",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.69
+  },
+  {
+   "a": "amiodarone",
+   "b": "primaquine",
+   "truth": "Major",
+   "pred": "Major",
+   "conf": 0.72
+  },
+  {
+   "a": "amiodarone",
+   "b": "roflumilast",
+   "truth": "Moderate",
+   "pred": "Major",
+   "conf": 0.74
+  },
+  {
+   "a": "amiodarone",
+   "b": "goserelin",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "insulin human",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.99
+  },
+  {
+   "a": "clemastine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.72
+  },
+  {
+   "a": "carbinoxamine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.84
+  },
+  {
+   "a": "sertraline",
+   "b": "vandetanib",
+   "truth": "Major",
+   "pred": "Unknown",
+   "conf": 0.58
+  },
+  {
+   "a": "primaquine",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Unknown",
+   "conf": 0.63
+  },
+  {
+   "a": "iloprost",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  },
+  {
+   "a": "goserelin",
+   "b": "sertraline",
+   "truth": "Moderate",
+   "pred": "Moderate",
+   "conf": 0.71
+  }
+ ],
+ "split": {
+  "train": 8286,
+  "val": 2263,
+  "test": 5524,
+  "test_drugs": 52
+ },
+ "xgboost": {
+  "eval": {
+   "n": 5524,
+   "macro_f1": 0.6485,
+   "per_class": {
+    "Major": {
+     "precision": 0.6728,
+     "recall": 0.6186,
+     "f1": 0.6446,
+     "support": 1602
+    },
+    "Moderate": {
+     "precision": 0.8924,
+     "recall": 0.6745,
+     "f1": 0.7683,
+     "support": 3800
+    },
+    "Minor": {
+     "precision": 0.6883,
+     "recall": 0.4344,
+     "f1": 0.5327,
+     "support": 122
+    }
+   },
+   "major_recall": 0.6186,
+   "major_safe_recall": 0.8252,
+   "coverage": 0.7618
+  },
+  "raw_macro_f1": 0.6754,
+  "raw_major_recall": 0.6186,
+  "guard": 0.1278894692659378,
+  "confusion": [
+   [
+    991,
+    275,
+    7,
+    329
+   ],
+   [
+    462,
+    2563,
+    17,
+    758
+   ],
+   [
+    20,
+    34,
+    53,
+    15
+   ]
+  ]
+ }
+}

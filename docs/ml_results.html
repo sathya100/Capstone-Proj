@@ -1,0 +1,181 @@
+<title>RxGuard Severity Model</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap">
+<style>
+/* Layout: one reading column (~880px) — summary first, then evidence, then caveats. Clinical-report register. */
+:root {
+  --bg: #f7f8f8; --surface: #ffffff; --ink: #14232b; --muted: #5a6a72; --rule: #d9e0e3;
+  --accent: #0e6773; --accent-soft: #e2f0f1;
+  --major: #b3261e; --moderate: #b26a00; --minor: #2e7d32; --unknown: #6a4fb3;
+  --major-soft: #fbe9e7; --moderate-soft: #fff3e0; --minor-soft: #e8f5e9; --unknown-soft: #efeafb;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f171b; --surface: #16222a; --ink: #e6eef1; --muted: #9db0b8; --rule: #2a3a43;
+  --accent: #5cc4cf; --accent-soft: #15343a;
+  --major: #ff8a80; --moderate: #ffb74d; --minor: #81c784; --unknown: #b39ddb;
+  --major-soft: #3a1d1b; --moderate-soft: #3a2b12; --minor-soft: #1b3320; --unknown-soft: #2a2340;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f171b; --surface: #16222a; --ink: #e6eef1; --muted: #9db0b8; --rule: #2a3a43;
+  --accent: #5cc4cf; --accent-soft: #15343a;
+  --major: #ff8a80; --moderate: #ffb74d; --minor: #81c784; --unknown: #b39ddb;
+  --major-soft: #3a1d1b; --moderate-soft: #3a2b12; --minor-soft: #1b3320; --unknown-soft: #2a2340;
+  color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 40px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--font-display); font-size: clamp(30px, 5vw, 42px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 22px; margin: 0 0 12px; text-wrap: balance; }
+p { margin: 0; max-width: 65ch; }
+.lede { font-size: 18px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.stat { background: var(--surface); padding: 18px; display: grid; gap: 4px; align-content: start; }
+.stat b { font-family: var(--font-mono); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 14px; color: var(--muted); }
+.stat small { font-size: 13px; color: var(--muted); }
+section { display: grid; gap: 14px; }
+.scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+tr.best td { background: var(--accent-soft); font-weight: 700; }
+.chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.Major { color: var(--major); background: var(--major-soft); }
+.Moderate { color: var(--moderate); background: var(--moderate-soft); }
+.Minor { color: var(--minor); background: var(--minor-soft); }
+.Unknown { color: var(--unknown); background: var(--unknown-soft); }
+.ok { color: var(--minor); font-weight: 700; } .miss { color: var(--major); font-weight: 700; } .safe { color: var(--unknown); font-weight: 700; }
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart text { fill: var(--ink); font-family: var(--font-body); }
+.chart .dim { fill: var(--muted); }
+.cm td.cell { text-align: center; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.note { font-size: 14px; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 70ch; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">RxGuard · FR-05 · trained 21 Oct 2026</div>
+    <h1>Predicting interaction severity for drug pairs DDInter doesn't cover</h1>
+    <p class="lede">A Random Forest on Morgan fingerprints of each drug's chemical structure, trained on real DDInter data and tested only on drugs it never saw during training.</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><span>Macro F1, unseen drugs</span><b>0.685</b><small>vs 0.272 majority-class, 0.484 logistic regression</small></div>
+    <div class="stat"><span>Major interactions never shown as milder</span><b>86.9%</b><small>Predicted Major, or flagged "Unknown — consult a pharmacist"</small></div>
+    <div class="stat"><span>Confident answers</span><b>61.9%</b><small>Rest are shown as Unknown rather than guessed</small></div>
+    <div class="stat"><span>Test set</span><b>5,524</b><small>pairs involving 52 held-out drugs</small></div>
+  </div>
+
+  <section>
+    <h2>Model comparison</h2>
+    <p>Same data, same drug-level split, same features for every model. Random Forest gives the best balance; XGBoost answers more pairs confidently but misses slightly more Majors.</p>
+    <div class="chart" role="img" aria-label="Macro F1 on unseen drugs: majority class 0.272, logistic regression 0.484, gradient boosting 0.585, XGBoost 0.675, random forest 0.685; target 0.70">
+      <svg viewBox="0 0 640 250">
+        <!-- x scale: 0 -> 170, 1.0 -> 610 (440px per unit) -->
+        <g class="dim" font-size="12">
+          <text x="170" y="242" text-anchor="middle">0</text><text x="280" y="242" text-anchor="middle">0.25</text>
+          <text x="390" y="242" text-anchor="middle">0.50</text><text x="500" y="242" text-anchor="middle">0.75</text><text x="610" y="242" text-anchor="middle">1.0</text>
+        </g>
+        <g stroke="var(--rule)" stroke-width="1"><line x1="170" y1="10" x2="170" y2="226"/><line x1="280" y1="10" x2="280" y2="226"/><line x1="390" y1="10" x2="390" y2="226"/><line x1="500" y1="10" x2="500" y2="226"/><line x1="610" y1="10" x2="610" y2="226"/></g>
+        <g font-size="14">
+          <text x="160" y="35" text-anchor="end">Majority class</text>
+          <text x="160" y="77" text-anchor="end">Logistic regression</text>
+          <text x="160" y="119" text-anchor="end">Gradient boosting</text>
+          <text x="160" y="161" text-anchor="end">XGBoost</text>
+          <text x="160" y="203" text-anchor="end" font-weight="700">Random Forest</text>
+        </g>
+        <rect x="170" y="18" width="119.7" height="26" rx="3" fill="var(--rule)"/>
+        <rect x="170" y="60" width="213" height="26" rx="3" fill="var(--muted)" opacity=".55"/>
+        <rect x="170" y="102" width="257.4" height="26" rx="3" fill="var(--accent)" opacity=".55"/>
+        <rect x="170" y="144" width="297" height="26" rx="3" fill="var(--accent)" opacity=".75"/>
+        <rect x="170" y="186" width="301.4" height="26" rx="3" fill="var(--accent)"/>
+        <g font-family="IBM Plex Mono, monospace" font-size="13">
+          <text x="296" y="36">0.272</text><text x="389" y="78">0.484</text><text x="433" y="120">0.585</text><text x="486" y="162">0.675</text><text x="486" y="204" font-weight="700">0.685</text>
+        </g>
+        <line x1="478" y1="10" x2="478" y2="226" stroke="var(--major)" stroke-width="2" stroke-dasharray="5 4"/>
+        <text x="482" y="14" font-size="12" fill="var(--major)">target 0.70</text>
+      </svg>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Model</th><th class="num">Macro F1</th><th class="num">With safety guard</th><th class="num">Major recall</th><th class="num">Major shown safely</th><th class="num">Confident</th></tr></thead>
+        <tbody>
+          <tr><td>Majority class (always "Moderate")</td><td class="num">0.272</td><td class="num">—</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td></tr>
+          <tr><td>Logistic regression</td><td class="num">0.484</td><td class="num">0.429</td><td class="num">0.596</td><td class="num">87.5%</td><td class="num">62.8%</td></tr>
+          <tr><td>Gradient boosting</td><td class="num">0.585</td><td class="num">0.560</td><td class="num">0.611</td><td class="num">82.3%</td><td class="num">68.6%</td></tr>
+          <tr><td>XGBoost</td><td class="num">0.675</td><td class="num">0.649</td><td class="num">0.619</td><td class="num">82.5%</td><td class="num">76.2%</td></tr>
+          <tr class="best"><td>Random Forest (shipped)</td><td class="num">0.685</td><td class="num">0.654</td><td class="num">0.560</td><td class="num">86.9%</td><td class="num">61.9%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">"With safety guard" counts every pair sent to "Unknown — consult a pharmacist" as wrong, which is why it is lower. "Major shown safely" is the share of true Major pairs that were either predicted Major or sent to Unknown, so never shown as Moderate or Minor.</p>
+  </section>
+
+  <section>
+    <h2>Where the Random Forest is right and wrong</h2>
+    <p>Rows are DDInter's label, columns are what the user would see. The Unknown column is the safety guard at work.</p>
+    <div class="scroll">
+      <table class="cm">
+        <thead><tr><th>DDInter says ↓ / shown as →</th><th class="num">Major</th><th class="num">Moderate</th><th class="num">Minor</th><th class="num">Unknown</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip Major">Major</span> 1,602</td><td class="cell ok">897</td><td class="cell miss">225</td><td class="cell miss">2</td><td class="cell safe">478</td></tr>
+          <tr><td><span class="chip Moderate">Moderate</span> 3,800</td><td class="cell">384</td><td class="cell ok">2,442</td><td class="cell">7</td><td class="cell safe">967</td></tr>
+          <tr><td><span class="chip Minor">Minor</span> 122</td><td class="cell">15</td><td class="cell">34</td><td class="cell ok">55</td><td class="cell safe">18</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Precision when it does answer: Major 0.69, Moderate 0.90, Minor 0.86. The 227 Majors shown as Moderate or Minor are the errors to keep driving down.</p>
+  </section>
+
+  <section>
+    <h2>Example predictions on held-out drugs</h2>
+    <p>Each pair includes a drug the model never saw in training. Confidence is the model's probability for the class it chose.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Drug pair</th><th>DDInter</th><th>Model shows</th><th class="num">Confidence</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>clarithromycin + ozanimod</td><td><span class="chip Major">Major</span></td><td><span class="chip Major">Major</span></td><td class="num">0.84</td><td class="ok">Correct</td></tr>
+          <tr><td>ibuprofen + sirolimus</td><td><span class="chip Major">Major</span></td><td><span class="chip Major">Major</span></td><td class="num">0.62</td><td class="ok">Correct</td></tr>
+          <tr><td>hydrocortisone + warfarin</td><td><span class="chip Moderate">Moderate</span></td><td><span class="chip Moderate">Moderate</span></td><td class="num">0.71</td><td class="ok">Correct</td></tr>
+          <tr><td>apalutamide + warfarin</td><td><span class="chip Moderate">Moderate</span></td><td><span class="chip Moderate">Moderate</span></td><td class="num">0.65</td><td class="ok">Correct</td></tr>
+          <tr><td>clarithromycin + metronidazole</td><td><span class="chip Minor">Minor</span></td><td><span class="chip Minor">Minor</span></td><td class="num">0.83</td><td class="ok">Correct</td></tr>
+          <tr><td>clarithromycin + warfarin</td><td><span class="chip Major">Major</span></td><td><span class="chip Unknown">Unknown</span></td><td class="num">0.53</td><td class="safe">Safe — flagged</td></tr>
+          <tr><td>levofloxacin + warfarin</td><td><span class="chip Major">Major</span></td><td><span class="chip Unknown">Unknown</span></td><td class="num">0.57</td><td class="safe">Safe — flagged</td></tr>
+          <tr><td>clarithromycin + ketoconazole</td><td><span class="chip Moderate">Moderate</span></td><td><span class="chip Major">Major</span></td><td class="num">0.67</td><td>Over-cautious</td></tr>
+          <tr><td>deferasirox + warfarin</td><td><span class="chip Major">Major</span></td><td><span class="chip Moderate">Moderate</span></td><td class="num">0.67</td><td class="miss">Missed Major</td></tr>
+          <tr><td>panobinostat + warfarin</td><td><span class="chip Major">Major</span></td><td><span class="chip Moderate">Moderate</span></td><td class="num">0.66</td><td class="miss">Missed Major</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it was tested</h2>
+    <ul class="plain">
+      <li><b>Data.</b> DDInter, all 8 downloads (130,422 unique pairs, 2,315 drugs). For this run: the 300 most-connected drugs plus the project's seed drugs, of which 261 have a small-molecule structure in PubChem, giving 16,073 pairs (5,053 Major, 10,528 Moderate, 492 Minor).</li>
+      <li><b>Features.</b> 1024-bit Morgan fingerprint (radius 2) per drug from its PubChem SMILES; a pair is the sum of its two fingerprints, so drug order never matters.</li>
+      <li><b>Split by drug.</b> 52 drugs (20%) held out for testing, 26 for validation. Training pairs never contain a test or validation drug: 8,286 train, 2,263 validation, 5,524 test pairs.</li>
+      <li><b>Safety guard.</b> Tuned on validation: if the model leans Moderate or Minor but gives Major at least 30% probability, the pair is shown as Unknown. Below 60% confidence it is also Unknown, never Low.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Limits of this result</h2>
+    <ul class="plain">
+      <li>Macro F1 is <b>0.685, short of the 0.70 target</b>, and 86.9% of Majors are shown safely against a 90% target. Training on all 2,315 drugs instead of 261 is the next step and is likely to help.</li>
+      <li>DDInter lists only pairs that interact, so the model has never seen a "no interaction" example and will always predict some level. Its job is to grade severity for an unlisted pair, not to say whether two drugs interact.</li>
+      <li>Biologics such as insulins and antibodies have no fingerprint the model can use well; pairs involving them stay Unknown in the app.</li>
+    </ul>
+  </section>
+
+  <footer>Data: DDInter (ddinter.scbdd.com), PubChem. Clinical decision support only. Not medical advice.</footer>
+</div>
