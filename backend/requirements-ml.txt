@@ -1,0 +1,5 @@
+# Offline pipeline 2: training the severity predictor (scripts/train_predictor.py).
+# The API itself only needs requirements.txt — the saved model carries its own fingerprints.
+-r requirements.txt
+rdkit>=2024.3
+xgboost>=2.0        # optional: python scripts/train_predictor.py --model xgboost

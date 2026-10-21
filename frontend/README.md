@@ -44,5 +44,7 @@ it in step with `backend/config/` if you change the rules.
 - Typeface: Atkinson Hyperlegible (designed for low-vision legibility).
 - Keyboard accessible (autocomplete supports arrow keys), respects reduced motion, works at phone width.
 
-The "Why these drugs interact" panel shows a placeholder until the RAG explainer is built; it
-renders `mechanism`, `monitoring` and `citations` from the API as soon as they are returned.
+The score is fetched first (`POST /check` with `explain: false`), then the explanation from
+`POST /explain` — once per drug pair, shared by both compared patients (NFR-01). The "Why these
+drugs interact" panel shows each sentence with numbered source links; each source expands to the
+FDA label passage it came from. The demo build has no label index, so it explains that instead.

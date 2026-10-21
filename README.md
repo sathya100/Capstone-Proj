@@ -19,7 +19,7 @@ drug A + drug B + patient ID
  2. Base severity        DDInter database, ML model for unknown pairs
  3. Patient context      FHIR server with Synthea patients
  4. Risk score           config-driven rules → 0–10 + breakdown
- 5. Explanation          RAG over FDA labels + LLM, cited      (planned)
+ 5. Explanation          RAG over FDA labels + LLM, every sentence cited
         │
         ▼
  JSON risk report → web UI
@@ -36,16 +36,18 @@ Example — Tylenol + Warfarin:
 
 ```
 Capstone-Proj/
-├── backend/                 Python / FastAPI service (steps 1–4)
+├── backend/                 Python / FastAPI service (all five steps)
 │   ├── rxguard/
 │   │   ├── normalise/       Step 1 — RxNorm name normalisation
-│   │   ├── interactions/    Step 2 — DDInter store + ML predictor hook
+│   │   ├── interactions/    Step 2 — DDInter store
+│   │   ├── ml/              Step 2 — ML severity predictor for pairs missing from DDInter
 │   │   ├── patients/        Step 3 — FHIR patient context
 │   │   ├── rules/           Step 4 — risk scoring engine
+│   │   ├── explain/         Step 5 — RAG explainer: FDA label passages, LLM, citation check
 │   │   ├── api/             HTTP API (POST /check)
 │   │   ├── pipeline.py      Runs the steps in order
 │   │   └── models.py        Shared data types
-│   ├── config/              Scoring rules and per-drug flags (YAML)
+│   ├── config/              Scoring rules, per-drug flags, explainer/LLM settings (YAML)
 │   ├── scripts/             Offline data pipelines
 │   ├── tests/               Unit and end-to-end tests
 │   └── README.md            Backend details
@@ -86,11 +88,16 @@ Or run the backend with Docker (API + HAPI FHIR server): `cd backend && docker c
 |---|---|---|
 | Name normalisation | FR-01–03 | ✅ Done |
 | Interaction store (DDInter) | FR-04 | ✅ Done — real DDInter data not yet loaded |
-| ML severity predictor | FR-05 | ⏳ Planned (weeks 3–4) |
+| ML severity predictor | FR-05 | ✅ Code done — train it once DDInter + PubChem data are downloaded |
 | Patient context (FHIR) | FR-06–07 | ✅ Done — Synthea patients not yet generated |
-| Rules engine | FR-08–10 | ✅ Done, 44 tests passing |
-| RAG explainer | FR-11–13 | ⏳ Planned (weeks 6–7) |
-| Web UI | FR-14–17 | ✅ Done — explanation panel waits on the RAG explainer |
+| Rules engine | FR-08–10 | ✅ Done |
+| RAG explainer | FR-11–13 | ✅ Code done — run `fetch_labels.py` to download the FDA labels |
+| Web UI | FR-14–17 | ✅ Done — score first, cited explanation streams in after |
+| Evaluation | — | Scripts ready (`train_predictor.py` metrics, `eval_explainer.py`); numbers pending real data |
+
+76 backend tests pass. Remaining work is data and measurement: load DDInter, fetch SMILES and FDA
+labels, generate Synthea patients, verify `drug_flags.yaml`, then run the evaluation. See
+[backend/README.md](backend/README.md#loading-real-data) for the commands.
 
 ## Data sources
 

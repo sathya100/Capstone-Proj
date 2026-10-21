@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ApiError, DEMO, api } from "./api";
 import DrugInput from "./components/DrugInput";
 import PatientSelect from "./components/PatientSelect";
@@ -68,21 +68,38 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const runId = useRef(0);
 
   const ready = drugA.trim() && drugB.trim() && patient && (!compare || patient2);
 
   async function run(a = drugA, b = drugB, p1 = patient, p2 = compare ? patient2 : null) {
+    const id = ++runId.current;
     setBusy(true);
     setError(null);
     try {
       const ids = p2 ? [p1, p2] : [p1];
-      setResults(await Promise.all(ids.map((id) => api.check(a, b, id))));
+      const scored = await Promise.all(ids.map((pid) => api.check(a, b, pid)));
+      setResults(scored);
+      loadExplanation(id, scored[0].drugs);
     } catch (e) {
       setResults(null);
       setError(e instanceof ApiError ? e : new ApiError(-1, String(e)));
     } finally {
       setBusy(false);
     }
+  }
+
+  // The explanation depends only on the drug pair, so one request serves both compared patients.
+  async function loadExplanation(id, [a, b]) {
+    let ex;
+    try {
+      ex = await api.explain(a, b);
+    } catch (e) {
+      ex = { explanation: { status: "error", message: "The explanation could not be loaded.", sentences: [], sources: [], dropped: [] } };
+    }
+    if (id !== runId.current) return; // a newer check has started
+    const { drugs, disclaimer, ...fields } = ex;
+    setResults((rs) => rs && rs.map((r) => ({ ...r, ...fields })));
   }
 
   function tryExample() {
