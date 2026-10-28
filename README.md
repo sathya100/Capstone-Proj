@@ -19,7 +19,7 @@ drug A + drug B + patient ID
  2. Base severity        DDInter database, ML model for unknown pairs
  3. Patient context      FHIR server with Synthea patients
  4. Risk score           config-driven rules → 0–10 + breakdown
- 5. Explanation          RAG over FDA labels + LLM, cited      (planned)
+ 5. Explanation          RAG over FDA labels + LLM, every sentence cited
         │
         ▼
  JSON risk report → web UI
@@ -36,17 +36,19 @@ Example — Tylenol + Warfarin:
 
 ```
 Capstone-Proj/
-├── backend/                 Python / FastAPI service (steps 1–4)
+├── backend/                 Python / FastAPI service (all five steps)
 │   ├── rxguard/
 │   │   ├── normalise/       Step 1 — RxNorm name normalisation
-│   │   ├── interactions/    Step 2 — DDInter store + ML predictor hook
+│   │   ├── interactions/    Step 2 — DDInter store
+│   │   ├── ml/              Step 2 — ML severity predictor for pairs missing from DDInter
 │   │   ├── patients/        Step 3 — FHIR patient context
 │   │   ├── rules/           Step 4 — risk scoring engine
-│   │   ├── evaluation/      Drug-disjoint split, bootstrap intervals
+│   │   ├── evaluation/      Bootstrap intervals and paired comparison (audit Q4)
+│   │   ├── explain/         Step 5 — RAG explainer: FDA label passages, LLM, citation check
 │   │   ├── api/             HTTP API (POST /check)
 │   │   ├── pipeline.py      Runs the steps in order
 │   │   └── models.py        Shared data types
-│   ├── config/              Scoring rules and per-drug flags (YAML)
+│   ├── config/              Scoring rules, per-drug flags, explainer/LLM settings (YAML)
 │   ├── scripts/             Offline data pipelines
 │   ├── tests/               Unit and end-to-end tests
 │   └── README.md            Backend details
@@ -87,28 +89,38 @@ Or run the backend with Docker (API + HAPI FHIR server): `cd backend && docker c
 | Component | Requirements | Status |
 |---|---|---|
 | Name normalisation | FR-01–03 | ✅ Done |
-| Interaction store (DDInter) | FR-04 | ✅ Done — real DDInter data not yet loaded |
-| ML severity predictor | FR-05 | ⏳ Planned (weeks 3–4) |
+| Interaction store (DDInter) | FR-04 | ✅ Done — DDInter loaded locally (data files not committed) |
+| ML severity predictor | FR-05 | ✅ Trained on real DDInter data (261 drugs, 16,073 pairs): Random Forest macro F1 0.65 on unseen drugs vs 0.43 for logistic regression (see Results) — [results](docs/ml_results.html) |
 | Patient context (FHIR) | FR-06–07 | ✅ Done — Synthea patients not yet generated |
-| Rules engine | FR-08–10 | ✅ Done, 44 tests passing |
-| RAG explainer | FR-11–13 | ⏳ Planned (weeks 6–7) |
-| Web UI | FR-14–17 | ✅ Done — explanation panel waits on the RAG explainer |
+| Rules engine | FR-08–10 | ✅ Done |
+| RAG explainer | FR-11–13 | ✅ Code done — run `fetch_labels.py` to download the FDA labels |
+| Web UI | FR-14–17 | ✅ Done — score first, cited explanation streams in after |
+| Evaluation | — | ML metrics in `docs/results/`; explainer metrics pending FDA labels |
+
+85 backend tests pass. Remaining work is data and measurement: load DDInter, fetch SMILES and FDA
+labels, generate Synthea patients, verify `drug_flags.yaml`, then run the evaluation. See
+[backend/README.md](backend/README.md#loading-real-data) for the commands.
 
 ## Results
 
-ML severity predictor (drug-disjoint test split, held-out drugs unseen in training):
+ML severity predictor — Random Forest vs. logistic regression on the same fingerprints, deployed
+setting (Major guard on), 5,524 test pairs whose 52 drugs were unseen in training:
 
-`Macro F1 = — [—, —] · Δ vs. baseline = — [—, —] · 5 runs` — **not yet computed.**
+`Macro F1 = 0.65 [0.62, 0.68] · Δ vs. baseline = +0.22 [+0.19, +0.26] · 1 run`
 
-Plan: macro F1 and Major recall on the 20% of DDInter pairs whose drugs are held out
-(`backend/rxguard/evaluation/split.py`), averaged over 5 training seeds, with 95% intervals from a
-2,000-resample bootstrap that resamples **held-out drugs** (pairs sharing a drug aren't independent).
-Δ is a paired comparison against logistic regression on the same features
-(`backend/rxguard/evaluation/metrics.py`). Baseline rows by **4 Nov 2026**; full results row by
-**11 Nov 2026**. A gain counts only if Δ's interval excludes 0 and Δ ≥ +0.05; Major recall must
-reach 0.90 regardless.
+| | Random Forest | Logistic regression | Target |
+|---|---|---|---|
+| Macro F1 | 0.65 [0.62, 0.68] | 0.43 [0.41, 0.45] | 0.70 |
+| Major recall | 0.56 [0.54, 0.58] | 0.60 [0.57, 0.62] | 0.90 |
+| Major safe recall (never shown milder) | 0.87 | 0.88 | 0.90 |
 
-Leakage tests: `backend/tests/test_leakage.py`. Full audit: [docs/validation_audit.md](docs/validation_audit.md).
+95% intervals: bootstrap over test pairs from the saved confusion matrices
+(`python backend/scripts/audit_intervals.py`). These treat pairs as independent and come from one
+run, so they are likely too narrow; a 5-seed re-run with drug-clustered, paired intervals is due
+**4 Nov 2026**. The macro F1 gain is real (interval excludes 0, well above +0.05); neither target is
+met yet.
+
+Leakage tests: `backend/tests/test_leakage.py` · Full audit: [docs/validation_audit.md](docs/validation_audit.md)
 
 ## Data sources
 

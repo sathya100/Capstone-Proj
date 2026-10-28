@@ -44,7 +44,9 @@ class Pipeline:
     def list_patients(self) -> list[dict[str, Any]]:
         return self.patients.list()
 
-    def check(self, drug_a: str, drug_b: str, patient_id: str) -> dict[str, Any]:
+    def check(self, drug_a: str, drug_b: str, patient_id: str, explain: bool = True) -> dict[str, Any]:
+        """Full report. With explain=False step 5 is skipped so the score returns fast (NFR-01);
+        the UI then fetches the explanation separately from explain()."""
         # 1. Normalise
         na, nb = self.normaliser.normalise(drug_a), self.normaliser.normalise(drug_b)
         unresolved = [{"query": n.query, "suggestions": n.suggestions} for n in (na, nb) if not n.found]
@@ -72,11 +74,9 @@ class Pipeline:
         # 4. Risk score
         risk = self.engine.score([ia, ib], sev, patient)
 
-        # 5. Explanation (RAG + LLM) — not built yet
-        explanation = self.explainer.explain(ia, ib, sev, risk) if self.explainer else {
-            "mechanism": None, "affected_systems": [], "monitoring": [], "citations": [],
-            "status": "explainer not implemented yet (weeks 6–7)",
-        }
+        # 5. Explanation (RAG over FDA labels + LLM). Only drug names and severity are passed —
+        #    never patient data (NFR-06).
+        explanation = self._explain(ia, ib, sev.severity) if explain else _empty_explanation("pending")
 
         return {
             "drugs": [ia, ib],
@@ -97,6 +97,29 @@ class Pipeline:
         }
 
 
+    def explain(self, drug_a: str, drug_b: str) -> dict[str, Any]:
+        """Step 5 on its own, for POST /explain. Takes ingredient names as returned by check()."""
+        na, nb = self.normaliser.normalise(drug_a), self.normaliser.normalise(drug_b)
+        if not (na.found and nb.found):
+            raise CheckError(422, {"error": "unknown_drug_name"})
+        ia, ib = na.ingredients[0], nb.ingredients[0]
+        sev = self.store.lookup(ia, ib)
+        return {"drugs": [ia, ib], **self._explain(ia, ib, sev), "disclaimer": DISCLAIMER}
+
+    def _explain(self, a: str, b: str, severity: Optional[str]) -> dict[str, Any]:
+        if self.explainer is None:
+            return _empty_explanation("explainer not configured")
+        try:
+            return self.explainer.explain(a, b, severity)
+        except Exception as e:  # an explanation failure must never block the score
+            return _empty_explanation(f"explainer error: {type(e).__name__}")
+
+
+def _empty_explanation(status: str) -> dict[str, Any]:
+    return {"mechanism": None, "affected_systems": [], "monitoring": [], "citations": [],
+            "explanation": {"status": status, "sentences": [], "passages": []}}
+
+
 def _worse(a: SeverityResult, b: SeverityResult) -> bool:
     """Unknown ranks just below Major, so it is never hidden behind a known Moderate/Minor (NFR-03)."""
     ra = 2.5 if a.severity is None else SEVERITY_RANK[a.severity]
@@ -114,4 +137,16 @@ def build_default_pipeline() -> Pipeline:
     patients = FhirPatientSource(fhir_url) if fhir_url else FilePatientSource(data / "patients")
     normaliser = RxNormNormaliser(cache_path=data / "cache" / "rxnorm.json",
                                   offline=os.getenv("RXGUARD_OFFLINE") == "1")
-    return Pipeline(normaliser, store, patients, RulesEngine.from_config())
+
+    # Step 2 fallback: trained severity model, if scripts/train_predictor.py has been run (FR-05)
+    predictor: Optional[SeverityPredictor] = None
+    model_path = Path(os.getenv("RXGUARD_MODEL", data / "models" / "severity_model.joblib"))
+    if model_path.exists():
+        from rxguard.ml.predictor import MLPredictor
+        predictor = MLPredictor.load(model_path)
+
+    # Step 5: RAG explainer over FDA label passages (FR-11–13)
+    from rxguard.explain.explainer import build_explainer
+    explainer = build_explainer(data)
+
+    return Pipeline(normaliser, store, patients, RulesEngine.from_config(), predictor, explainer)

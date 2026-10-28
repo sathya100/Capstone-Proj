@@ -1,0 +1,5 @@
+# Offline pipeline 3b + embedding retrieval: ChromaDB with all-MiniLM-L6-v2 (scripts/build_label_index.py).
+# Optional: without these the explainer uses TF-IDF retrieval over the same passages.
+-r requirements.txt
+chromadb>=0.5
+sentence-transformers>=3.0

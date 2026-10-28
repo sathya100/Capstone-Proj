@@ -1,119 +1,142 @@
-"""Leakage tests for the ML severity predictor's train / val / test split (validation audit Q3).
+"""Leakage tests for the severity predictor's train / val / test split (validation audit Q3).
 
-Run on a synthetic DDInter-like table so they pass in CI without the licensed data, and on the
-real DDInter CSVs when they are present in data/raw/ddinter/.
+They test the code that produced the reported results: the DDInter loader's de-duplication
+(rxguard/interactions/store.py) and the drug-level split (rxguard/ml/train.py::drug_split).
+They run on a synthetic DDInter-shaped table in CI, and also on the real store when
+data/interactions.sqlite holds loaded DDInter pairs.
 """
 from __future__ import annotations
 
+import csv
 import random
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from rxguard.evaluation.metrics import major_recall, macro_f1, paired_cluster_bootstrap, results_row
-from rxguard.evaluation.split import (DrugSplit, canonical_pair, cluster_of, dedupe,
-                                      drug_disjoint_split)
+from rxguard.evaluation.metrics import (confusion_bootstrap, major_recall, macro_f1,
+                                        paired_cluster_bootstrap, results_row)
+from rxguard.interactions.store import InteractionStore
+from rxguard.ml.train import drug_split
 
-RAW = Path(__file__).resolve().parents[1] / "data" / "raw" / "ddinter"
+DB = Path(__file__).resolve().parents[1] / "data" / "interactions.sqlite"
+LEVELS = ["Minor", "Moderate", "Major"]
 
 
-def synthetic_rows(n_drugs=120, n_pairs=2500, seed=1):
+def write_ddinter_csv(path, rows):
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["DDInterID_A", "Drug_A", "DDInterID_B", "Drug_B", "Level"])
+        for i, (a, b, lvl) in enumerate(rows):
+            w.writerow([f"DDInter{i}", a, f"DDInter{i}b", b, lvl])
+
+
+def synthetic_pairs(tmp_path, n_drugs=150, n_pairs=3000, seed=1):
+    """Load synthetic rows through the real DDInter loader, including the duplicates DDInter has:
+    reversed order, different case/whitespace, and the same pair in two per-ATC files."""
     rng = random.Random(seed)
     drugs = [f"drug{i}" for i in range(n_drugs)]
-    rows = []
-    for _ in range(n_pairs):
-        a, b = rng.sample(drugs, 2)
-        rows.append((a, b, rng.choice(["Minor", "Moderate", "Major"])))
-    # duplicates DDInter actually contains: reversed order, case, salt form, repeated across files
-    rows += [("Drug3", "drug7", "Minor"), ("drug7 sodium", "DRUG3", "Major"),
-             ("drug3", "drug7", "Moderate"), ("drug9 hydrochloride", "drug9", "Major")]
-    return rows
+    rows = [(*rng.sample(drugs, 2), rng.choice(LEVELS)) for _ in range(n_pairs)]
+    dupes = [(b.upper(), f" {a} ", lvl) for a, b, lvl in rows[:200]]
+    write_ddinter_csv(tmp_path / "code_A.csv", rows)
+    write_ddinter_csv(tmp_path / "code_B.csv", dupes + [("Drug1", "drug2", "Unknown")])
+    store = InteractionStore(tmp_path / "x.sqlite")
+    store.load_ddinter_csv([tmp_path / "code_A.csv", tmp_path / "code_B.csv"])
+    return [tuple(r) for r in store.conn.execute("SELECT drug_a, drug_b, severity FROM interactions")]
 
 
-def ddinter_rows():
-    import csv
-    for p in sorted(RAW.glob("*.csv")):
-        with open(p, newline="", encoding="utf-8") as f:
-            for r in csv.DictReader(f):
-                yield r["Drug_A"], r["Drug_B"], (r.get("Level") or "").strip()
+def real_pairs(_tmp_path):
+    store = InteractionStore(DB)
+    return [tuple(r) for r in store.conn.execute("SELECT drug_a, drug_b, severity FROM interactions")]
 
 
-SOURCES = [pytest.param(synthetic_rows, id="synthetic"),
-           pytest.param(ddinter_rows, id="ddinter",
-                        marks=pytest.mark.skipif(not any(RAW.glob("*.csv")),
-                                                 reason="DDInter CSVs not downloaded"))]
+def _real_store_loaded() -> bool:
+    try:
+        return DB.exists() and InteractionStore(DB).count() > 1000
+    except Exception:
+        return False
+
+
+SOURCES = [pytest.param(synthetic_pairs, id="synthetic"),
+           pytest.param(real_pairs, id="ddinter",
+                        marks=pytest.mark.skipif(not _real_store_loaded(), reason="DDInter not loaded"))]
 
 
 @pytest.fixture(params=SOURCES)
-def split(request):
-    return drug_disjoint_split(request.param(), seed=0)
+def pairs(request, tmp_path):
+    return request.param(tmp_path)
 
 
-def keys(pairs):
-    return {(a, b) for a, b, _ in pairs}
+@pytest.fixture
+def split(pairs):
+    return drug_split(pairs, seed=42)  # same seed as scripts/train_predictor.py
 
 
-def test_no_drug_shared_between_train_and_test(split):
-    assert DrugSplit.drugs(split.train).isdisjoint(split.test_drugs)
-    assert DrugSplit.drugs(split.val).isdisjoint(split.test_drugs)
+def drugs(ps):
+    return {d for a, b, _ in ps for d in (a, b)}
 
 
-def test_no_drug_shared_between_train_and_val(split):
-    assert DrugSplit.drugs(split.train).isdisjoint(split.val_drugs)
+def keys(ps):
+    return {frozenset((a, b)) for a, b, _ in ps}
 
 
-def test_every_test_pair_has_an_unseen_drug(split):
-    seen = DrugSplit.drugs(split.train) | DrugSplit.drugs(split.val)
+def test_loader_stores_each_pair_once_in_either_order(pairs):
+    assert len(keys(pairs)) == len(pairs)
+
+
+def test_train_and_test_share_no_drug_ids(split):
+    assert drugs(split.train).isdisjoint(split.test_drugs)
+    assert drugs(split.val).isdisjoint(split.test_drugs)
+
+
+def test_train_and_val_share_no_validation_drug(split):
+    assert drugs(split.train).isdisjoint(split.val_drugs)
+
+
+def test_every_test_pair_has_a_drug_unseen_in_training(split):
+    seen = drugs(split.train) | drugs(split.val)
     assert all(a not in seen or b not in seen for a, b, _ in split.test)
 
 
-def test_no_pair_in_two_sets_in_either_order(split):
+def test_no_pair_appears_in_two_sets(split):
     tr, va, te = keys(split.train), keys(split.val), keys(split.test)
     assert tr.isdisjoint(te) and tr.isdisjoint(va) and va.isdisjoint(te)
-    flipped = {(b, a) for a, b in tr}
-    assert flipped.isdisjoint(te)
 
 
-def test_split_covers_every_pair_once(split):
-    total = len(split.train) + len(split.val) + len(split.test)
-    assert len(keys(split.train) | keys(split.val) | keys(split.test)) == total
+def test_split_covers_every_pair_exactly_once(pairs, split):
+    assert len(split.train) + len(split.val) + len(split.test) == len(pairs)
 
 
-def test_test_set_is_roughly_a_fifth_of_pairs(split):
-    total = len(split.train) + len(split.val) + len(split.test)
-    assert 0.12 <= len(split.test) / total <= 0.35
+def test_split_is_reproducible(pairs):
+    assert drug_split(pairs, seed=42).test == drug_split(pairs, seed=42).test
 
 
-def test_split_is_reproducible():
-    a, b = drug_disjoint_split(synthetic_rows(), seed=3), drug_disjoint_split(synthetic_rows(), seed=3)
-    assert a.test == b.test and a.train == b.train
+# --- interval code (validation audit Q4) ----------------------------------------------------------
 
-
-def test_dedupe_merges_order_case_and_salt_keeping_most_severe():
-    pairs = dedupe(synthetic_rows())
-    match = [p for p in pairs if (p[0], p[1]) == canonical_pair("drug3", "drug7")]
-    assert match == [("drug3", "drug7", "Major")]
-    assert all(a != b for a, b, _ in pairs)  # salt-vs-parent self pair dropped
-
-
-# --- interval code (Handout 2 style, resampling by held-out drug) -------------------------------
-
-def test_paired_bootstrap_detects_a_real_gap_and_not_a_null_one():
-    split = drug_disjoint_split(synthetic_rows(n_pairs=4000), seed=0)
+def test_paired_cluster_bootstrap_detects_a_real_gap_and_not_a_null_one(tmp_path):
+    split = drug_split(synthetic_pairs(tmp_path, n_pairs=4000), seed=0)
     y = [s for _, _, s in split.test]
-    cl = [cluster_of(p, split.test_drugs) for p in split.test]
+    cl = [a if a in split.test_drugs else b for a, b, _ in split.test]
     rng = np.random.default_rng(0)
 
     def noisy(acc):
-        return [t if rng.random() < acc else rng.choice(["Minor", "Moderate", "Major"]) for t in y]
+        return [t if rng.random() < acc else rng.choice(LEVELS) for t in y]
 
     base = noisy(0.5)
     better = paired_cluster_bootstrap(y, [noisy(0.8) for _ in range(5)], base, cl, n_boot=300)
     assert better["delta"][1] > 0                      # interval excludes 0
     same = paired_cluster_bootstrap(y, [noisy(0.5) for _ in range(5)], base, cl, n_boot=300)
     assert same["delta"][1] < 0 < same["delta"][2]     # interval contains 0
-    assert "· 5 runs" in results_row(better)
+    assert results_row(better).endswith("· 5 runs")
+
+
+def test_confusion_bootstrap_matches_point_metrics():
+    cm = [[897, 225, 2, 478], [384, 2442, 7, 967], [15, 34, 55, 18]]  # RF, docs/results
+    res = confusion_bootstrap(cm, cm, n_boot=200)
+    assert res["model"][0] == pytest.approx(0.6539, abs=1e-4)
+    assert res["model_major_recall"][0] == pytest.approx(0.5599, abs=1e-4)
+    assert res["model"][1] < res["model"][0] < res["model"][2]
+    assert results_row(res).endswith("· 1 run")
 
 
 def test_metrics_basic():

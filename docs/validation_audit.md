@@ -1,151 +1,176 @@
 # RxGuard — Validation Audit (Week 9 → Week 10)
 
-**Status on 28 Oct 2026:** the rules engine (step 4) is built and unit-tested, but the ML severity
-predictor (step 2 fallback, FR-05) has not been trained and DDInter is not yet loaded. There are
-**no test predictions yet**, so Q4 gives the exact computation plan, and the README carries that
-plan in place of a results row. The split, leakage tests and interval code are already in the repo
-so the numbers can be produced as soon as the model exists.
+EGN 6933 / CAI 6826 · Sathya · Updated 28 Oct 2026
 
-Scope of this audit: the **ML severity predictor**, because it is the only part of RxGuard that is
-learned from data and therefore the only part with a train/test split to audit. The rules engine
-and the planned RAG explainer are covered where they affect trust (Q5) and deployment (Q6).
+**What is audited:** the **ML severity predictor** (FR-05), the one part of RxGuard learned from
+data. It gives a base severity (Major / Moderate / Minor) for a drug pair that is missing from
+DDInter; the rules engine then adjusts it for the patient. The rules engine and the RAG explainer
+come in where they affect trust (Q5) and deployment (Q6). § numbers refer to Handout 1.
+
+**Results row:** `Macro F1 = 0.65 [0.62, 0.68] · Δ vs. baseline = +0.22 [+0.19, +0.26] · 1 run`
+(Random Forest vs. logistic regression, held-out-drug test set, 5,524 pairs, 52 unseen drugs.
+How the interval was computed, and why it is probably too narrow, is in Q4.)
 
 ---
 
-## Q1 · Claim
+## Q1 · Claim (§1)
 
-**Claim:** for a drug pair that is *missing* from DDInter, RxGuard's ML predictor assigns the
-interaction severity (Minor / Moderate / Major) well enough to be used as the base severity in the
-patient risk score — specifically, it misses few Major interactions.
+**Claim:** for a pair of drugs not in DDInter, RxGuard predicts the interaction severity well
+enough to use as the base of the patient risk score, and rarely shows a Major interaction as
+something milder.
 
 | | |
 |---|---|
-| Data | DDInter interaction pairs with a known level (Major / Moderate / Minor; "Unknown" rows dropped), keyed by ingredient. Features: PubChem molecular fingerprints of each drug. |
-| Metric | **Macro F1** over the three levels (headline), and **recall on Major** (safety, NFR-02). |
-| Number | Target from the requirements doc: macro F1 ≥ 0.70 and Major recall ≥ 0.90 on held-out drugs, clearly above a majority-class and a logistic-regression baseline. **No measured number exists yet.** |
+| Data | DDInter pairs with a known level ("Unknown" rows dropped), restricted to 261 drugs (the 300 with the most DDInter interactions plus the demo drugs, keeping those with a PubChem structure): **16,073 pairs**. Features: Morgan fingerprints of both drugs (RDKit), combined symmetrically. |
+| Metric | **Macro F1** over the three levels; **Major recall** and **Major safe recall** (share of true Majors shown as Major or as "Unknown — consult a pharmacist", never as Moderate/Minor) for safety, NFR-02. |
+| Number that first supported the claim | Random Forest macro F1 **0.685** on unseen drugs vs. **0.272** for a majority-class baseline (README, 21 Oct). |
+| Targets (requirements doc) | Macro F1 ≥ 0.70; Major recall ≥ 0.90. |
 
-What we are *not* claiming: anything about real patients (Synthea only, NFR-06), or that the 0–10
-risk score is clinically calibrated. The rule weights in `config/rules.yaml` are a design choice.
+That first number is the model *without* the Major guard, against the *weakest* baseline. The
+deployed model uses the guard, and the fair comparison is logistic regression on the same features.
+On that basis the numbers are lower (Q4), and **neither target is met** (`meets_targets` is false
+for all three in `docs/results/severity_metrics_rf.json`).
 
-## Q2 · Split
+## Q2 · Split (§2)
 
-**How:** drug-disjoint ("cold-drug") split, in `backend/rxguard/evaluation/split.py`.
+**How:** drug-level split in `backend/rxguard/ml/train.py::drug_split` (seed 42).
 
-1. Canonicalise every pair (A–B = B–A, lowercase, salt words such as "sodium" stripped) and
-   de-duplicate across DDInter's per-ATC files, keeping the most severe level.
-2. Hold out ~10% of **drugs**. Every pair touching a held-out drug goes to **test** (~20% of
-   pairs, matching the plan).
-3. From the remaining drugs, hold out another ~10% the same way as **validation**, used for
-   threshold tuning, calibration and model selection. Test is scored once, at the end.
-4. Fixed seed, so the split is reproducible; the same split is used for the model and both
-   baselines.
+- 20% of the 261 drugs (52) are held out as **test drugs**; every pair touching one goes to test.
+- 10% of drugs (26) are held out as **validation drugs**, taken from the non-test drugs. The Major
+  guard is tuned here, so test is used only for the final numbers.
+- Train = pairs where both drugs are training drugs.
+- Result: **8,286 train · 2,263 validation · 5,524 test pairs** (34% of pairs in test, because each
+  held-out drug takes all its pairs with it).
 
-**Why it supports the claim:** at run time the predictor is only called for pairs DDInter doesn't
-have, which usually involve a drug that is new or rarely studied. A random split *by pair* would
-let the model see warfarin + 200 other drugs in training and then be tested on warfarin + one more,
-so it could score well by memorising "warfarin pairs are usually Major". Holding out whole drugs
-tests the situation the claim is about: severity for a drug the model has not seen.
+**Does it support the claim?** Mostly yes. The predictor is only used for pairs missing from
+DDInter, which usually involve a drug it hasn't seen. A random split by *pair* would let it learn
+"warfarin pairs are often Major" from training and reuse that at test time; holding out whole drugs
+tests the real situation. Two limits:
 
-**Limitation:** a pair where *one* drug is unseen is easier than one where *both* are. We will
-report the two subsets separately in Q4 so the headline doesn't hide the harder case.
+1. **Test drugs aren't like the drugs that will actually need predictions.** All 261 drugs were
+   chosen because they have the *most* DDInter interactions. Pairs missing from DDInter tend to
+   involve new or rarely studied drugs, which these are not. The test set is "unseen but common"
+   drugs; real use is "unseen and uncommon". Performance in use is likely lower.
+2. Most test pairs have one unseen drug and one training drug; pairs with *both* drugs unseen are
+   harder and are not reported separately.
 
-## Q3 · Leakage
+## Q3 · Leakage (§3)
 
-| # | Possible leakage path | Check / fix | Where |
+| Pattern | Risk here | Check | Result |
 |---|---|---|---|
-| 1 | Same pair stored as A–B and B–A, or in two DDInter files, ending up in train and test | Canonical key + de-dupe before splitting; test asserts no pair in two sets in either order | `test_no_pair_in_two_sets_in_either_order`, `test_dedupe_merges_order_case_and_salt_keeping_most_severe` |
-| 2 | Drug identity: model memorises per-drug severity (the main risk) | Split by drug; tests assert train/val/test share **no drug IDs** and every test pair has an unseen drug | `test_no_drug_shared_between_train_and_test`, `test_no_drug_shared_between_train_and_val`, `test_every_test_pair_has_an_unseen_drug` |
-| 3 | Name variants of one drug (warfarin vs warfarin sodium) treated as different drugs, so the "unseen" drug is actually seen | Salt-word stripping now; **real fix is keying by RxNorm ingredient ID** (open gap, Q7) | `canonical_drug()` in `split.py` |
-| 4 | Feature scaling / selection fit on all data | Fit any scaler or feature selector on train only (fingerprints are per-drug bits with no label information) | Training script (to write) |
-| 5 | Decision threshold for Major recall, calibration, or hyper-parameters tuned on test | All tuning on the validation drugs; test touched once | Split design, Q2 step 3 |
-| 6 | Rule weights tuned on the same 50 end-to-end scenarios they are evaluated on | Split scenarios 25 tune / 25 held out before tuning | Planned, Q7 |
+| **Duplicate rows across the split** (same pair stored as A–B and B–A, or in two DDInter ATC files) | Real: DDInter ships one CSV per ATC group, so the same pair appears more than once | Loader keys pairs by sorted lowercase names and keeps the most severe level; test feeds reversed, re-cased and cross-file duplicates through the real loader | ✅ Pass |
+| **Group / entity leakage** (same drug in train and test) — the main risk | Real: per-drug severity patterns are easy to memorise | Drug-level split; tests assert train, validation and test share **no drug IDs**, no pair is in two sets, and every test pair has an unseen drug | ✅ Pass |
+| **Name-variant leakage** (warfarin vs. warfarin sodium counted as two drugs) | Possible: pairs are keyed by name, not by RxNorm ingredient ID | Not yet checked on the real data | ⚠️ Open |
+| **Tuning on test** (threshold, model choice) | The Major guard is a tuned threshold | Guard tuned on validation drugs only (`train_and_evaluate`) | ✅ By design |
+| **Preprocessing fit on all data** | Low: fingerprints are computed per molecule and carry no label information | — | ✅ None found |
+| **Selection on the full dataset** | The 261-drug set was chosen by interaction count across *all* pairs, including test pairs | Uses counts, not severity labels, so it's not label leakage, but it shapes the test set (Q2, limit 1) | ⚠️ Noted |
+| **Model selection on test** | RF was picked as best of four models by *test* macro F1 (`model_comparison.json`) | Should be picked on validation | ⚠️ Mild optimism |
 
-**The leakage tests are in `backend/tests/test_leakage.py`.** They run in CI on a synthetic
-DDInter-shaped table (seeded with reversed, case-changed, salt-variant and repeated pairs) and run
-automatically on the real DDInter CSVs once they are in `backend/data/raw/ddinter/` (skipped until
-then). Current result: all pass.
+**Leakage tests: `backend/tests/test_leakage.py`** (7 tests). They run the real loader
+(`rxguard/interactions/store.py`) and the real split (`rxguard/ml/train.py::drug_split`, same seed as
+training) on a synthetic DDInter-shaped table in CI, and on the real store automatically when
+`backend/data/interactions.sqlite` is loaded. All pass.
 
-## Q4 · Metric and uncertainty
+## Q4 · Metric and uncertainty (§4–6, §8)
 
-**Not computed yet.** Plan:
+**Is the metric right for the decision?** Partly. Macro F1 weighs the rare Minor class equally,
+which suits a three-level label with 2% Minor pairs. But the decision that matters clinically is
+"is this a Major?", and the worst error is showing a Major as milder. So the deciding metric is
+**Major safe recall**, with macro F1 secondary. Accuracy would be misleading (69% of test pairs are
+Moderate; a majority-class model scores 0.69 accuracy but 0.27 macro F1).
 
-| | |
-|---|---|
-| Metric | Macro F1 (headline) and Major recall, on the **test** drugs of the split above |
-| Baselines | (a) majority class, (b) logistic regression on the same fingerprint features. The paired comparison is against **logistic regression**, the stronger one |
-| Runs | 5 training seeds on the one fixed split; each metric averaged over the 5 runs |
-| 95% interval | Percentile bootstrap, 2,000 resamples, **resampling held-out drugs, not pairs**, since pairs that share a drug are not independent (the "several rows per group" case in Handout 2). Code: `paired_cluster_bootstrap()` in `backend/rxguard/evaluation/metrics.py` |
-| Paired comparison | On each resample, score the model and the baseline on the *same* rows and take the difference; interval of Δ from those differences |
-| Also reported | One-unseen vs both-unseen subsets; Major recall with its own interval |
-| Data | DDInter, downloaded under its academic licence, loaded with `scripts/load_ddinter.py` |
-| Date | **Wed 11 Nov 2026** (week 11, the evaluation week in the project plan) |
+**Results** (deployed setting: Major guard on; "Unknown" counts as wrong for F1; test set = 5,524
+pairs, 52 unseen drugs; computed with `backend/scripts/audit_intervals.py`):
 
-**Decision rule.** We will claim the model beats logistic regression only if the 95% interval of
-Δ macro F1 excludes 0. The smallest gain worth claiming is **+0.05 macro F1**: below that, a
-pharmacist-facing tool gains little from a black-box model over a transparent linear one.
-Separately, Major recall below 0.90 fails NFR-02 regardless of F1 — the model would then not be
-used, and missing pairs would show "Unknown — consult a pharmacist".
+| | Random Forest | Logistic regression (baseline) | Majority class |
+|---|---|---|---|
+| Macro F1 | **0.65** [0.62, 0.68] | 0.43 [0.41, 0.45] | 0.27 |
+| Major recall | 0.56 [0.54, 0.58] | 0.60 [0.57, 0.62] | 0 |
+| Major safe recall | 0.87 | 0.88 | — |
+| Coverage (confident predictions) | 62% | 63% | — |
 
-## Q5 · Trust
+**Paired comparison:** Δ macro F1 (RF − logistic regression) = **+0.22 [+0.19, +0.26]**.
 
-**Calibration.** The pipeline trusts a prediction only when its confidence is ≥ 0.6 (NFR-03);
-below that the pair is "Unknown", never Low. That floor only means something if the confidences
-are calibrated, which raw classifier scores usually aren't. Plan: reliability diagram and expected
-calibration error on the **validation** drugs; if poorly calibrated, fit isotonic or Platt scaling
-on validation, then report ECE on test. Also report what share of test pairs falls below 0.6 —
-if most do, the model rarely helps in practice.
+**Decision rule.** The interval of Δ excludes 0 and the gain is far above the smallest gain that
+would matter (+0.05 macro F1, below which a transparent linear model would be preferable), so the
+claim "RF beats logistic regression on macro F1" holds. But **RF does not beat it where safety is
+concerned**: its Major recall is slightly *lower* (0.56 vs 0.60), and both miss the 0.90 target.
+
+**How the intervals were made, and their limits.** The training run saved only confusion matrices,
+not per-pair predictions, and the data (DDInter, PubChem) isn't in the repo, so the run couldn't be
+repeated for this audit. The intervals are a 2,000-resample percentile bootstrap over **test pairs**
+drawn from the saved confusion matrices (`confusion_bootstrap` in
+`backend/rxguard/evaluation/metrics.py`). Three consequences:
+
+- **Too narrow, most likely.** Pairs sharing a test drug aren't independent, and there are only 52
+  test drugs. The handout's rule for several rows per group is to resample the groups. With 52
+  clusters the true interval will be noticeably wider.
+- **Unpaired.** Model and baseline were resampled separately, which usually makes the Δ interval
+  *wider* than a paired one.
+- **One run.** No seed-to-seed variation is included.
+
+The proper version — **5 seeds, per-pair predictions saved, resampling held-out drugs, model and
+baseline scored on the same resample** — is already written and tested
+(`paired_cluster_bootstrap` in the same file). It replaces these numbers in the fix in Q7. A
+difference this large (+0.22) is very likely to stay clear of 0; the Major-recall comparison is the
+one that could change.
+
+## Q5 · Trust (§7, §9)
+
+**Calibration: not checked.** RxGuard trusts a prediction only when its confidence is ≥ 0.6, and
+otherwise shows "Unknown — consult a pharmacist" (NFR-03). The Major guard is also a probability
+threshold (P(Major) ≥ 0.30 for RF). Both assume the probabilities mean what they say, but Random
+Forest probabilities are typically poorly calibrated (pushed away from 0 and 1). There is also
+evidence of drift from validation to test: the guard was tuned to give 0.90 Major safe recall on
+validation and gave **0.87** on test. Plan: reliability diagram and expected calibration error on
+validation, isotonic calibration fitted on validation if needed, then ECE reported on test.
 
 **Graders.**
 
-- *Ground truth for the ML model* is DDInter itself — a curated database, not a grader we built.
-  It has known gaps (many pairs are "Unknown", levels can differ from other sources), so test
-  labels are not perfect. Not validated by us; stated as a limitation.
-- *End-to-end scenarios:* the expected risk band for each of the 50 scenarios is set by me, the
-  same person who wrote the rules. **Not validated.** Plan: a second rater (a pharmacy student or
-  classmate) labels the bands independently from the FDA labels; report agreement (Cohen's κ)
-  and settle disagreements before scoring.
-- *Explanations (planned RAG step):* RAGAS faithfulness uses an **LLM judge**. **Not validated.**
-  Plan: hand-label 30 explanation sentences as supported / unsupported by the cited passage and
-  report the judge's agreement with those labels before trusting its scores.
+- *Labels for the ML model* come from DDInter, a curated database, not a grader we built. It is not
+  validated by us; levels can disagree with other sources, so some "errors" are label noise.
+- *End-to-end scenarios:* I set the expected risk band for each of the 50 scenarios myself, the same
+  person who wrote the rules. **Not validated.** Plan: a second rater (pharmacy student or
+  classmate) labels them independently from the FDA labels; report agreement (Cohen's κ).
+- *Explanations:* faithfulness is scored with RAGAS, which uses an **LLM judge**. **Not validated.**
+  Plan: hand-label 30 explanation sentences as supported / not supported by the cited passage and
+  report the judge's agreement with them before trusting its scores.
 
-## Q6 · After launch
+## Q6 · After launch (§10)
 
 **What to monitor**
 
-- Share of checks that fall back to the predictor, and share returned as "Unknown" (a jump means
-  the drug mix has moved away from DDInter's coverage).
-- Confidence distribution of predictions over time, against the validation distribution.
-- Pharmacist overrides or "this looks wrong" feedback, especially on predicted (not DDInter) pairs.
-- New DDInter releases: re-score previously *predicted* pairs that now have a DDInter level — a free
-  live test set for the model.
-- Missing patient fields (`missing_fields` in the report) — the score silently drops rules when
-  labs are absent.
+- Share of checks that use the predictor, and the share shown as "Unknown" (now 38% of test pairs).
+  A rise means the drugs being checked are drifting away from the training set.
+- Confidence and P(Major) distributions over time, compared with validation.
+- New DDInter releases: pairs RxGuard predicted that now have a real DDInter level are a free,
+  ongoing test set — track Major safe recall on them.
+- Pharmacist overrides and "this looks wrong" reports, split by DDInter vs. predicted severity.
+- How often patient fields are missing (`missing_fields`), since missing labs silently switch rules off.
 
 **What could fail**
 
-- Distribution shift: pairs missing from DDInter differ systematically from those in it (newer
-  drugs, biologics, poorly characterised chemistry), so test performance may overstate real use.
-- A predicted Moderate for a true Major — the worst error (NFR-02) — gets shown as a confident score.
-- Name normalisation errors map a brand to the wrong ingredient, so the right pair is never looked up.
-- Seed `drug_flags.yaml` is unverified (all 9 entries `verified: false`); wrong flags shift scores
-  for every patient on that drug.
-- Synthetic Synthea patients don't reflect real lab distributions; rule thresholds untested on real data.
+- A true Major shown as milder: **13% of test Majors** are shown as Moderate or Minor today. That pair then gets 4 base points
+  instead of 6, which can drop a High patient into Moderate.
+- Distribution shift: the model was tested on common drugs; real missing pairs involve rare ones (Q2).
+- Too many "Unknown" results make the tool unhelpful, and alert fatigue sets in.
+- Name normalisation maps a brand to the wrong ingredient, so the real DDInter pair is never found.
+- `drug_flags.yaml` entries are unverified (`verified: false`), which shifts every score for that drug.
 
-**Who would be harmed**
+**Who is harmed:** patients most at risk from interactions — older adults, people with liver or
+kidney disease, people taking many medicines — if a dangerous pair is scored low. Clinicians and
+caregivers are harmed too if a precise-looking 0–10 score earns more trust than it deserves.
 
-Patients — especially older patients, people with liver or kidney disease, and people on many
-medicines — if a dangerous combination is scored low. A secondary harm is alert fatigue: if too
-many pairs come back High or Unknown, clinicians stop reading the score. Clinicians and caregivers
-who over-trust a precise-looking number are also exposed; the report is decision support only.
+## Q7 · Verdict (§11)
 
-## Q7 · Verdict
+**The checklist item that matters most here is the safety metric with its uncertainty (§4–6).** The
+model clearly beats the baselines on macro F1, but on the error that hurts patients — a Major shown
+as milder — it misses the target (Major safe recall 0.87 vs. 0.90), it is no better than logistic
+regression, and the interval around that number is unknown because the evaluation is a single run
+with no per-pair predictions saved.
 
-**Biggest gap:** the headline component has never been measured. There is no trained predictor,
-no DDInter data loaded and therefore no test predictions — the claim in Q1 currently rests on
-targets, not results. (Next gaps: drug identity is keyed by name rather than RxNorm ID, which
-weakens leakage check #3; and no grader has been validated.)
-
-**First fix:** load DDInter, run the drug-disjoint split with the leakage tests passing on the real
-data, and produce the majority-class and logistic-regression baseline rows with their intervals —
-**by Wed 4 Nov 2026**. The trained model, 5 runs and the full results row (Q4) follow by
-**Wed 11 Nov 2026**.
+**The one fix, by Wed 4 Nov 2026:** re-run the evaluation over **5 seeds**, save per-pair test
+predictions, and report macro F1 and Major safe recall with **drug-clustered, paired 95% intervals**
+(`paired_cluster_bootstrap`), with the model chosen on validation rather than test. If the lower
+bound of Major safe recall is below 0.90, raise the guard target on validation until it isn't, and
+report the coverage that costs. That updated row replaces the one at the top of this audit.

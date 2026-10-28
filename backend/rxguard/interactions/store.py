@@ -73,7 +73,7 @@ class SeverityPredictor(Protocol):
 
 
 class NoModelPredictor:
-    """Placeholder until the week 3–4 classifier exists: always unknown."""
+    """Used when no trained model exists (scripts/train_predictor.py not run yet): always unknown."""
 
     def predict(self, a: str, b: str) -> tuple[Optional[str], float]:
         return None, 0.0

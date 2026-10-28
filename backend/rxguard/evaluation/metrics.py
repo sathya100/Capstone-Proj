@@ -75,10 +75,54 @@ def results_row(res: dict, name: str = "Macro F1") -> str:
     """README row in the course format."""
     m, d = res["model"], res["delta"]
     return (f"{name} = {m[0]:.2f} [{m[1]:.2f}, {m[2]:.2f}] · "
-            f"Δ vs. baseline = {d[0]:+.2f} [{d[1]:+.2f}, {d[2]:+.2f}] · {res['runs']} runs")
+            f"Δ vs. baseline = {d[0]:+.2f} [{d[1]:+.2f}, {d[2]:+.2f}] · "
+            f"{res['runs']} run{'s' if res['runs'] != 1 else ''}")
 
 
 def beats_baseline(res: dict, min_meaningful_gain: float) -> tuple[bool, bool]:
     """(significant: interval of Δ excludes 0, meaningful: Δ > smallest gain that matters)."""
     _, lo, _ = res["delta"]
     return lo > 0, res["delta"][0] > min_meaningful_gain
+
+
+# --- intervals from saved confusion matrices -------------------------------------------------------
+# Used when only the confusion matrix of a run was kept (no per-pair predictions): resample test
+# pairs from the matrix. Rows = true class, columns = shown label. This treats pairs as independent
+# and resamples each model separately, so the Δ interval is unpaired (usually wider than a paired
+# one) and ignores clustering by drug (usually narrower). The drug-cluster, paired version above
+# replaces it once per-pair test predictions are saved.
+
+def _f1_from_confusion(cm: np.ndarray, n_classes: int) -> tuple[float, float]:
+    f1s = []
+    for c in range(n_classes):
+        tp = cm[c, c]
+        fp = cm[:, c].sum() - tp
+        fn = cm[c, :].sum() - tp
+        denom = 2 * tp + fp + fn
+        f1s.append(2 * tp / denom if denom else 0.0)
+    major_recall = cm[0, 0] / cm[0, :].sum() if cm[0, :].sum() else float("nan")
+    return float(np.mean(f1s)), float(major_recall)
+
+
+def confusion_bootstrap(model_cm, baseline_cm, n_classes: int = 3, n_boot: int = 2000,
+                        seed: int = 0) -> dict:
+    """Macro F1 and Major recall (class 0 = Major) with 95% intervals, model vs baseline."""
+    rng = np.random.default_rng(seed)
+    mc, bc = np.asarray(model_cm, float), np.asarray(baseline_cm, float)
+
+    def boot(cm):
+        n, p = int(cm.sum()), (cm / cm.sum()).ravel()
+        draws = rng.multinomial(n, p, size=n_boot).reshape(n_boot, *cm.shape)
+        return np.array([_f1_from_confusion(d, n_classes) for d in draws])
+
+    bm, bb = boot(mc), boot(bc)
+    pm, pb = np.array(_f1_from_confusion(mc, n_classes)), np.array(_f1_from_confusion(bc, n_classes))
+
+    def ci(point, samples):
+        lo, hi = np.percentile(samples, [2.5, 97.5])
+        return float(point), float(lo), float(hi)
+
+    return {"model": ci(pm[0], bm[:, 0]), "baseline": ci(pb[0], bb[:, 0]),
+            "delta": ci(pm[0] - pb[0], bm[:, 0] - bb[:, 0]),
+            "model_major_recall": ci(pm[1], bm[:, 1]), "baseline_major_recall": ci(pb[1], bb[:, 1]),
+            "runs": 1}
