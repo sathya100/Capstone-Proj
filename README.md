@@ -42,6 +42,7 @@ Capstone-Proj/
 │   │   ├── interactions/    Step 2 — DDInter store + ML predictor hook
 │   │   ├── patients/        Step 3 — FHIR patient context
 │   │   ├── rules/           Step 4 — risk scoring engine
+│   │   ├── evaluation/      Drug-disjoint split, bootstrap intervals
 │   │   ├── api/             HTTP API (POST /check)
 │   │   ├── pipeline.py      Runs the steps in order
 │   │   └── models.py        Shared data types
@@ -53,7 +54,8 @@ Capstone-Proj/
 │   ├── src/components/      Gauge, breakdown, body map, inputs
 │   └── README.md            Frontend details
 ├── docs/
-│   └── RxGuard_Requirements_Architecture.pdf
+│   ├── RxGuard_Requirements_Architecture.pdf
+│   └── validation_audit.md  Week 9 validation audit
 └── .github/workflows/       CI: runs the tests on every push
 ```
 
@@ -92,6 +94,22 @@ Or run the backend with Docker (API + HAPI FHIR server): `cd backend && docker c
 | RAG explainer | FR-11–13 | ⏳ Planned (weeks 6–7) |
 | Web UI | FR-14–17 | ✅ Done — explanation panel waits on the RAG explainer |
 
+## Results
+
+ML severity predictor (drug-disjoint test split, held-out drugs unseen in training):
+
+`Macro F1 = — [—, —] · Δ vs. baseline = — [—, —] · 5 runs` — **not yet computed.**
+
+Plan: macro F1 and Major recall on the 20% of DDInter pairs whose drugs are held out
+(`backend/rxguard/evaluation/split.py`), averaged over 5 training seeds, with 95% intervals from a
+2,000-resample bootstrap that resamples **held-out drugs** (pairs sharing a drug aren't independent).
+Δ is a paired comparison against logistic regression on the same features
+(`backend/rxguard/evaluation/metrics.py`). Baseline rows by **4 Nov 2026**; full results row by
+**11 Nov 2026**. A gain counts only if Δ's interval excludes 0 and Δ ≥ +0.05; Major recall must
+reach 0.90 regardless.
+
+Leakage tests: `backend/tests/test_leakage.py`. Full audit: [docs/validation_audit.md](docs/validation_audit.md).
+
 ## Data sources
 
 All free for academic use; data files are not committed to this repo.
@@ -107,4 +125,5 @@ All free for academic use; data files are not committed to this repo.
 ## Documentation
 
 - [Requirements, datasets & architecture](docs/RxGuard_Requirements_Architecture.pdf)
+- [Validation audit](docs/validation_audit.md)
 - [Backend README](backend/README.md)
